@@ -46,22 +46,24 @@ int main(void)
 	GPIO_Test_Init(TLED_PC13);
 	DEBUG_Init();
 
-	//MAX2719_TestInit();
+	MAX2719_TestInit();
 	//BUTTOM_TestInit();
 
 	I2C_TestInit();
 
 
 	while (1) {
-		GPIO_Test_On(TLED_PC13);
-		HAL_Delay(100);
-		GPIO_Test_Off(TLED_PC13);
-		HAL_Delay(100);
+		//GPIO_Test_On(TLED_PC13);
+		//HAL_Delay(100);
+		//GPIO_Test_Off(TLED_PC13);
+		//HAL_Delay(100);
 		//fprintf(stderr,"Test\n");
 
 		//MAX2719_TestLoop();
 		//BUTTOM_TestLoop();
+		HAL_Delay(10);
 		I2C_TestLoop();
+		printf("loop\n");
 
 		//int r = rand();
 		//printf("%i\n",r);
@@ -127,9 +129,8 @@ void _Error_Handler(char *file, int line)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  while(1)
-  {
-  }
+  fprintf("Error_Handler : file %s on line %d\r\n", file, line);
+  while(1) { }
   /* USER CODE END Error_Handler_Debug */
 }
 //------------------------------------------------------------------------------

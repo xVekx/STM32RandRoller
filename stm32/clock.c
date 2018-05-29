@@ -32,7 +32,7 @@ static  RCC_ClkTypeDef Clk_Config = {
 //------------------------------------------------------------------------------
 void SystemClock_Config(void)
 {
-	__HAL_RCC_AFIO_CLK_ENABLE();
+	//__HAL_RCC_AFIO_CLK_ENABLE();
 
 	if (HAL_RCC_OscConfig(&Clk_Config.osc) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);

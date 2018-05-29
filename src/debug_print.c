@@ -3,7 +3,6 @@
 #include <sys/times.h>
 #include <sys/unistd.h>
 //------------------------------------------------------------------------------
-
 #include "uart.h"
 #include "debug_print.h"
 #include "def.h"
