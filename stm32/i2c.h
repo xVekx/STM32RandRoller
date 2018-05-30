@@ -21,9 +21,21 @@ typedef struct {
 	I2C_HandleTypeDef		hi2c;
 	GPIO_InitDevTypeDef*	pins;
 	const int				pins_size;
-} I2C_InitDevTypeDev;
+} I2C_Device;
 //------------------------------------------------------------------------------
-void I2C_InitDev(I2C_InitDevTypeDev* dev);
+void I2C_InitDev(I2C_Device* dev);
+void I2C_DeInitDev(I2C_Device *dev);
+//------------------------------------------------------------------------------
+HAL_StatusTypeDef I2C_Write	(	I2C_Device *dev,
+								uint16_t addr,
+								uint8_t *data,
+								uint16_t size );
+
+HAL_StatusTypeDef I2C_Read	(	I2C_Device *dev,
+								uint16_t addr,
+								uint8_t *data,
+								uint16_t size );
+//------------------------------------------------------------------------------
 void I2C_TestInit();
 void I2C_TestLoop();
 //------------------------------------------------------------------------------

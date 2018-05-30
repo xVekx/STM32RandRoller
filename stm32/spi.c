@@ -55,7 +55,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
 #endif
 }
 //------------------------------------------------------------------------------
-void SPI_InitDev(SPI_InitDevTypeDev *dev)
+void SPI_InitDev(SPI_Device *dev)
 {
 	GPIO_InitPin(dev->pins,dev->pins_size);
 	if (HAL_SPI_Init(&dev->hspi) != HAL_OK) {
@@ -63,7 +63,7 @@ void SPI_InitDev(SPI_InitDevTypeDev *dev)
 	}
 }
 //------------------------------------------------------------------------------
-void SPI_DeInit(SPI_InitDevTypeDev *dev)
+void SPI_DeInit(SPI_Device *dev)
 {
 	if (HAL_SPI_DeInit(&dev->hspi) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);

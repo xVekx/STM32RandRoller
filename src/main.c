@@ -21,7 +21,9 @@
 #include "debug_print.h"
 #include "max2719.h"
 #include "buttom.h"
-#include "i2c.h"
+//#include "i2c.h"
+//#include "PCF8574.h"
+#include "hd44780_i2c.h"
 //------------------------------------------------------------------------------
 void HAL_MspInit(void)
 {
@@ -46,10 +48,14 @@ int main(void)
 	GPIO_Test_Init(TLED_PC13);
 	DEBUG_Init();
 
-	MAX2719_TestInit();
+	//MAX2719_TestInit();
 	//BUTTOM_TestInit();
 
-	I2C_TestInit();
+	//I2C_TestInit();
+
+	//PCF8574_TestInit();
+
+	HD44780_I2C_TestInit();
 
 
 	while (1) {
@@ -61,9 +67,13 @@ int main(void)
 
 		//MAX2719_TestLoop();
 		//BUTTOM_TestLoop();
-		HAL_Delay(10);
-		I2C_TestLoop();
-		printf("loop\n");
+		//HAL_Delay(10);
+		//I2C_TestLoop();
+		//PCF8574_TestLoop();
+
+		HD44780_I2C_TestLoop();
+
+		//printf("loop\n");
 
 		//int r = rand();
 		//printf("%i\n",r);
@@ -127,16 +137,13 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 //------------------------------------------------------------------------------
 void _Error_Handler(char *file, int line)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  fprintf("Error_Handler : file %s on line %d\r\n", file, line);
-  while(1) { }
-  /* USER CODE END Error_Handler_Debug */
+	fprintf(stderr,"Error_Handler : file %s on line %d\r\n", file, line);
+	while(1) { }
 }
 //------------------------------------------------------------------------------
 #ifdef  USE_FULL_ASSERT
 void assert_failed(uint8_t* file, uint32_t line)
 { 
-	printf("Wrong parameters value: file %s on line %d\r\n", file, line);
+	fprintf(stderr,"Wrong parameters value: file %s on line %d\r\n", file, line);
 }
 #endif /* USE_FULL_ASSERT */

@@ -20,10 +20,10 @@ typedef struct {
 	SPI_HandleTypeDef		hspi;
 	GPIO_InitDevTypeDef*	pins;
 	const int				pins_size;
-} SPI_InitDevTypeDev;
+} SPI_Device;
 //------------------------------------------------------------------------------
-void SPI_InitDev(SPI_InitDevTypeDev* dev);
-void SPI_DeInitDev(SPI_InitDevTypeDev* dev);
+void SPI_InitDev(SPI_Device* dev);
+void SPI_DeInitDev(SPI_Device* dev);
 //------------------------------------------------------------------------------
 void SPI_TestInit();
 void SPI_TestLoop();

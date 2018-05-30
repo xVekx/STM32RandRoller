@@ -31,28 +31,57 @@ static void I2C_Clk(I2C_TypeDef *i2c,FunctionalState stat)
 #endif
 }
 //------------------------------------------------------------------------------
-void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c) { }
+void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
+{
+}
 //------------------------------------------------------------------------------
-void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c) { }
+void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
+{
+}
 //------------------------------------------------------------------------------
-void I2C_InitDev(I2C_InitDevTypeDev *dev)
+void I2C_InitDev(I2C_Device *dev)
 {
 	I2C_Clk(dev->hi2c.Instance,ENABLE);
 	GPIO_InitPin(dev->pins,dev->pins_size);
 	if (HAL_I2C_Init(&dev->hi2c) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
+	printf("I2C_InitDev\n");
 }
 //------------------------------------------------------------------------------
-void I2C_DeInitDev(I2C_InitDevTypeDev *dev)
+void I2C_DeInitDev(I2C_Device *dev)
 {
 	if (HAL_I2C_Init(&dev->hi2c) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 	GPIO_DeInitPin(dev->pins,dev->pins_size);
 	I2C_Clk(dev->hi2c.Instance,DISABLE);
+	printf("I2C_DeInitDev\n");
 }
 //------------------------------------------------------------------------------
+HAL_StatusTypeDef I2C_Write	(	I2C_Device *dev,
+								uint16_t addr,
+								uint8_t *data,
+								uint16_t size )
+{
+	HAL_StatusTypeDef ret;
+	while (HAL_I2C_GetState(&dev->hi2c) != HAL_I2C_STATE_READY);
+	ret = HAL_I2C_Master_Transmit(&dev->hi2c,addr,data,size,0xFF);
+	return ret ;
+}
+//------------------------------------------------------------------------------
+HAL_StatusTypeDef I2C_Read	(	I2C_Device *dev,
+								uint16_t addr,
+								uint8_t *data,
+								uint16_t size )
+{
+	HAL_StatusTypeDef ret;
+	while (HAL_I2C_GetState(&dev->hi2c) != HAL_I2C_STATE_READY);
+	ret = HAL_I2C_Master_Transmit(&dev->hi2c,addr,data,size,0xFF);
+	return ret ;
+}
+//------------------------------------------------------------------------------
+#if 0
 static GPIO_InitDevTypeDef GPIO_I2cPinInit[] = {
 	{
 		.gpio_inittypedef = {
@@ -78,7 +107,7 @@ static I2C_InitDevTypeDev I2C_DevInit = {
 			.Instance = I2C1,
 			//.Instance = I2C2,
 			.Init = {
-				.ClockSpeed       = 10000,
+				.ClockSpeed       = 100000,
 				.DutyCycle        = I2C_DUTYCYCLE_2,
 				.OwnAddress1      = 0,
 				.AddressingMode   = I2C_ADDRESSINGMODE_7BIT,
@@ -129,21 +158,36 @@ void I2C_TestLoop()
 
 	uint8_t data[1];
 
-	uint16_t dev_addr = 0x40;
+	uint16_t dev_addr = 0x4E;
 
-	HAL_I2C_DeInit(hi2c);
+	//4e 4f 27
 
-	HAL_Delay(10);
+	//HAL_I2C_DeInit(hi2c);
 
-	HAL_I2C_Init(hi2c);
+	HAL_Delay(1000);
 
-	data[0] = 0xAA;
-	while (HAL_I2C_GetState(hi2c) != HAL_I2C_STATE_READY);
-	HAL_StatusTypeDef ret = HAL_I2C_Master_Transmit(hi2c,dev_addr,data,1,0xFF);
+	//HAL_I2C_Init(hi2c);
+
+	HAL_StatusTypeDef ret;
+
+	data[0] = BIT(3);
+	ret = I2C_Write(&I2C_DevInit,dev_addr,data,1);
+
 	printf("Ret:%i\n",ret);
+	HAL_Delay(1000);
 
 	data[0] = 0x00;
-	while (HAL_I2C_GetState(hi2c) != HAL_I2C_STATE_READY);
-	ret = HAL_I2C_Master_Transmit(hi2c,dev_addr,data,1,0xFF);
+	ret = I2C_Write(&I2C_DevInit,dev_addr,data,1);
 	printf("Ret:%i\n",ret);
 }
+#else
+void I2C_TestInit()
+{
+
+}
+
+void I2C_TestLoop()
+{
+
+}
+#endif

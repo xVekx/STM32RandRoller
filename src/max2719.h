@@ -89,11 +89,12 @@ typedef enum {
 } MAX2719_DisplayTest;
 //------------------------------------------------------------------------------
 typedef struct {
-	SPI_InitDevTypeDev	spi;
+	SPI_Device			spi;
 	MAX2719_Intensity	intens;
 	MAX2719_ScanLimit	scanlimit;
 	MAX2719_Addr		digitbegin;
 	MAX2719_Addr		digitend;
+//TODO добавить пин cs
 	//void (*init_command)(void);
 } MAX2719_DevDef;
 //------------------------------------------------------------------------------
