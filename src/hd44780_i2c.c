@@ -1,10 +1,234 @@
 //------------------------------------------------------------------------------
 #include "hd44780_i2c.h"
+#include <string.h>
+#include <stdarg.h>
+//------------------------------------------------------------------------------
+#define LCD_A0_SET()			(dev->data.bit.a0 = 1)
+#define LCD_A0_CLR()			(dev->data.bit.a0 = 0)
+
+#define LCD_RW_SET()			(dev->data.bit.rw = 1)
+#define LCD_RW_CLR()			(dev->data.bit.rw = 0)
+
+#define LCD_E_SET()				(dev->data.bit.e = 1)
+#define LCD_E_CLR()				(dev->data.bit.e = 0)
+
+#define LCD_LED_SET()			(dev->data.bit.led = 1)
+#define LCD_LED_CLR()			(dev->data.bit.led = 0)
+
+#define LCD_DATA_CLEAN()		(dev->data.bit.d = 0x00)
+#define LCD_DATA_SET(_b)		(dev->data.bit.d = (_b))
+//------------------------------------------------------------------------------
+static int CharUtf8ToUnc(char *text,int *size)
+{
+	int ret = -1;
+
+	if(TBIT0(text[0],7)) {
+		ret = text[0];
+		if(size != NULL) {
+			*size += 1;
+		}
+	} else if(	TBIT1(text[0],7) && TBIT1(text[0],6) && TBIT0(text[0],5)) {
+
+		uint8_t u0 = text[0]; uint8_t u1 = text[1];
+
+		CMASK(u0,(BIT(7)|BIT(6)));
+		CMASK(u1,(BIT(7)));
+		ret = 0;
+		SMASK(ret,(u0 << 6u));
+		SMASK(ret,u1);
+		if(size != NULL) {
+			*size += 2;
+		}
+	} else if(	TBIT1(text[0],7) && TBIT1(text[0],6) && TBIT1(text[0],5) &&
+				TBIT0(text[0],4)) {
+
+		uint8_t u0 = text[0]; uint8_t u1 = text[1]; uint8_t u2 = text[2];
+
+		CMASK(u0,(BIT(7)|BIT(6)|BIT(5)));
+		CMASK(u1,(BIT(7)));
+		CMASK(u2,(BIT(7)));
+
+		ret = 0;
+
+		SMASK(ret,(u0 << 12u));
+		SMASK(ret,(u1 << 6u));
+		SMASK(ret,u2);
+
+		if(size != NULL) {
+			*size += 3;
+		}
+	} else if(	TBIT1(text[0],7) && TBIT1(text[0],6) && TBIT1(text[0],5) &&
+				TBIT1(text[0],4) && TBIT0(text[0],3)) {
+		ret = -1;
+
+		if(size != NULL) {
+			*size += 4;
+		}
+	}
+
+	if(ret < 0) {
+		fprintf(stderr,"CharUtf8ToUnc NOT CONV\n");
+	}
+
+	return ret;
+}
+//------------------------------------------------------------------------------
+static void HD44780_I2C_Write(HD44780_I2C_Device *dev)
+{
+	HAL_StatusTypeDef ret;
+	ret = PCF8574_Write(&dev->pcf8574,&dev->data.data,1);
+	if(ret != HAL_OK) {
+		printf("HD44780_I2C_Write Ret:%i\n",ret);
+	}
+}
+//------------------------------------------------------------------------------
+static void HD44780_I2C_Enable(HD44780_I2C_Device *dev)
+{
+	HD44780_I2C_Write(dev);
+	LCD_E_SET();
+	HD44780_I2C_Write(dev);
+	LCD_E_CLR();
+	HD44780_I2C_Write(dev);
+}
+//------------------------------------------------------------------------------
+void HD44780_I2C_LedOn(HD44780_I2C_Device *dev)
+{
+	LCD_LED_SET();
+	HD44780_I2C_Write(dev);
+}
+//------------------------------------------------------------------------------
+void HD44780_I2C_LedOff(HD44780_I2C_Device *dev)
+{
+	LCD_LED_CLR();
+	HD44780_I2C_Write(dev);
+}
+//------------------------------------------------------------------------------
+static void HD44780_I2C_SetData(HD44780_I2C_Device *dev,uint8_t data)
+{
+	LCD_RW_CLR();
+	LCD_E_SET();
+
+	dev->data.bit.d = data >> 4;
+	HD44780_I2C_Enable(dev);
+
+	dev->data.bit.d = data;
+	HD44780_I2C_Enable(dev);
+}
+//------------------------------------------------------------------------------
+void HD44780_I2C_Command(HD44780_I2C_Device *dev,uint8_t data)
+{
+	//LcdReady(dev);
+	//_delay_us(10);
+	LCD_A0_CLR();
+	HD44780_I2C_SetData(dev,data);
+}
+//------------------------------------------------------------------------------
+void HD44780_I2C_Data(HD44780_I2C_Device *dev,uint8_t data)
+{
+	//LcdReady();
+	//_delay_us(10);
+	LCD_A0_SET();
+	HD44780_I2C_SetData(dev,data);
+}
+//------------------------------------------------------------------------------
+void HD44780_I2C_DisplayClear(HD44780_I2C_Device *dev)
+{
+	HD44780_I2C_Command(dev,HD44780_Comm_DisplayClear);
+	HAL_Delay(2);
+}
+//------------------------------------------------------------------------------
+void HD44780_I2C_ReturnHome(HD44780_I2C_Device *dev)
+{
+	HD44780_I2C_Command(dev,HD44780_Comm_ReturnHome);
+}
+//------------------------------------------------------------------------------
+void HD44780_I2C_EntryModeSet(HD44780_I2C_Device *dev,HD44780_EntryModeSet ems)
+{
+	HD44780_I2C_Command(dev,HD44780_Comm_EntryModeSet | ems);
+}
+//------------------------------------------------------------------------------
+void HD44780_I2C_DisplayControl(HD44780_I2C_Device *dev,HD44780_DisplayControl dc)
+{
+	HD44780_I2C_Command(dev,HD44780_Comm_DisplayControl | dc);
+}
+//------------------------------------------------------------------------------
+void HD44780_I2C_CursOrDispShift(HD44780_I2C_Device *dev,HD44780_CursOrDispShift cods)
+{
+	HD44780_I2C_Command(dev,HD44780_Comm_CursOrDispShift | cods);
+}
+//------------------------------------------------------------------------------
+void HD44780_I2C_FunctionSet(HD44780_I2C_Device *dev,HD44780_FunctionSet fs)
+{
+	HD44780_I2C_Command(dev,HD44780_Comm_FunctionSet | fs);
+}
+//------------------------------------------------------------------------------
+void HD44780_I2C_SetDDRAM(HD44780_I2C_Device *dev,HD44780_DDRAM addr)
+{
+	HD44780_I2C_Command(dev,HD44780_Comm_DDRAM | addr);
+}
+//------------------------------------------------------------------------------
+int HD44780_I2C_vsnprintf(	HD44780_I2C_Device *dev,
+							HD44780_DDRAM addr,
+							const char *text,
+							...)
+{
+	HD44780_I2C_SetDDRAM(dev,addr);
+
+	const buff_size = 16;
+	char buff[buff_size + 2];
+	memset(buff,0,buff_size + 2);
+
+	va_list vl;
+	va_start(vl,text);
+	int ret = vsnprintf(buff,buff_size,text,vl);
+	va_end(vl);
+
+	int size = strlen(buff);
+
+	for(int i=0;i<size;) {
+		int cc = CharUtf8ToUnc(&buff[i],&i);
+		printf("0x%.2x\n",cc);
+		if((cc < 0) || (cc == '\0'))
+			break;
+		if(cc != '\n') {
+			HD44780_I2C_Data(dev,cc);
+		}
+	}
+	return ret;
+}
 //------------------------------------------------------------------------------
 void HD44780_I2C_InitDev(HD44780_I2C_Device *dev)
 {
 	PCF8574_InitDev(&dev->pcf8574);
 	printf("HD44780_I2C_InitDev OK\n");
+
+	HAL_Delay(40);
+
+	LCD_DATA_CLEAN();
+	LCD_LED_SET();
+
+	LCD_E_CLR();
+	LCD_A0_CLR();
+	LCD_RW_CLR();
+
+	LCD_DATA_SET((HD44780_Comm_FunctionSet | HD44780_FunctionSet_8bit) >> 4);
+	HD44780_I2C_Enable(dev);
+	HAL_Delay(1);
+
+	HD44780_I2C_Enable(dev);
+	HAL_Delay(1);
+
+	HD44780_I2C_Enable(dev);
+	HAL_Delay(1);
+
+	LCD_DATA_CLEAN();
+	LCD_DATA_SET(HD44780_Comm_FunctionSet>>4);
+	HD44780_I2C_Enable(dev);
+	HAL_Delay(1);
+
+	//HD44780_I2C_FunctionSet(dev,HD44780_FunctionSet_Page);
+	HD44780_I2C_DisplayControl(dev,HD44780_DisplayControl_DOn);
+	HD44780_I2C_DisplayClear(dev);
 }
 //------------------------------------------------------------------------------
 void HD44780_I2C_DeInitDev(HD44780_I2C_Device *dev)
@@ -13,14 +237,7 @@ void HD44780_I2C_DeInitDev(HD44780_I2C_Device *dev)
 	printf("HD44780_I2C_DeInitDev OK\n");
 }
 //------------------------------------------------------------------------------
-void HD44780_I2C_Write(HD44780_I2C_Device *dev)
-{
-	HAL_StatusTypeDef ret;
-	ret = PCF8574_Write(&dev->pcf8574,&dev->data,1);
-	printf("HD44780_I2C_Write Ret:%i\n",ret);
-}
-//------------------------------------------------------------------------------
-static GPIO_InitDevTypeDef GPIO_HD44780_I2C_PinInit[] = {
+static GPIO_Device GPIO_HD44780_I2C_PinInit[] = {
 	{
 		.gpio_inittypedef = {
 			.Mode		=	GPIO_MODE_AF_OD,
@@ -44,7 +261,7 @@ static HD44780_I2C_Device HD44780_I2C_Dev = {
 			.hi2c = {
 					.Instance = I2C1,
 					.Init = {
-					.ClockSpeed       = 10000,
+					.ClockSpeed       = 100000,
 					.DutyCycle        = I2C_DUTYCYCLE_2,
 					.OwnAddress1      = 0,
 					.AddressingMode   = I2C_ADDRESSINGMODE_7BIT,
@@ -60,246 +277,26 @@ static HD44780_I2C_Device HD44780_I2C_Dev = {
 		.i2c_addr = 0x27,
 	}
 };
+
+
 //------------------------------------------------------------------------------
-#define LCD_COM_A0				(0)
-#define LCD_COM_RW				(1)
-#define LCD_COM_E				(2)
-#define LCD_LED					(3)
-
-#define LCD_A0_SET()			SBIT(dev->data,LCD_COM_A0)
-#define LCD_A0_CLR()			CBIT(dev->data,LCD_COM_A0)
-
-#define LCD_RW_SET()			SBIT(dev->data,LCD_COM_RW)
-#define LCD_RW_CLR()			CBIT(dev->data,LCD_COM_RW)
-
-#define LCD_E_SET()				SBIT(dev->data,LCD_COM_E)
-#define LCD_E_CLR()				CBIT(dev->data,LCD_COM_E)
-
-#define LCD_LED_SET()			SBIT(dev->data,LCD_LED)
-#define LCD_LED_CLR()			CBIT(dev->data,LCD_LED)
-
-#define LCD_DATA_4				(4)
-#define LCD_DATA_5				(5)
-#define LCD_DATA_6				(6)
-#define LCD_DATA_7				(7)
-
-#define LCD_DATA_4_SET()		SBIT(dev->data,LCD_DATA_4)
-#define LCD_DATA_5_SET()		SBIT(dev->data,LCD_DATA_5)
-#define LCD_DATA_6_SET()		SBIT(dev->data,LCD_DATA_6)
-#define LCD_DATA_7_SET()		SBIT(dev->data,LCD_DATA_7)
-
-#define LCD_DATA_4_CLR()		CBIT(dev->data,LCD_DATA_4)
-#define LCD_DATA_5_CLR()		CBIT(dev->data,LCD_DATA_5)
-#define LCD_DATA_6_CLR()		CBIT(dev->data,LCD_DATA_6)
-#define LCD_DATA_7_CLR()		CBIT(dev->data,LCD_DATA_7)
-
-#define LCD_CLEAN_DATA()		CMASK(dev->data,(BIT(LCD_DATA_4)| BIT(LCD_DATA_5)|\
-													BIT(LCD_DATA_6)| BIT(LCD_DATA_7)))
-
-
-//---------------------------------------------------------------------------------------------------
-//Clear Display Очищает индикатор и помещает курсор в самую левую позицию
-#define LCD_CLR_DIS			BIT(0)
-//---------------------------------------------------------------------------------------------------
-//Return Home Перемещает курсор в левую позицию
-#define LCD_RET_HOME		BIT(1)
-//---------------------------------------------------------------------------------------------------
-//Entry Mode Set Установка направления сдвига курсора
-#define LCD_MOD_SET			BIT(2)
-//ID=0/1—влево/вправо
-#define LCD_MOD_SET_ID		BIT(1)
-//разрешение сдвига дисплея (SH=1) при за писи в DDRAM
-#define LCD_MOD_SET_SH		BIT(0)
-//---------------------------------------------------------------------------------------------------
-//Display ON/OFF control
-#define LCD_DIS_CON			BIT(3)
-//Включает индикатор (D=1)
-#define LCD_DIS_CON_D		BIT(2)
-//Выбирает тип курсора (C, B)
-#define LCD_DIS_CON_C		BIT(1)
-#define LCD_DIS_CON_B		BIT(0)
-//---------------------------------------------------------------------------------------------------
-//Cursor or Display Shift
-//Выполняет сдвиг дисплея или курсора
-//(SC=0/1—курсор/дисплей, RL=0/1—влево/вправо)
-#define LCD_CUR_SH			BIT(4)
-#define LCD_CUR_SH_SC		BIT(3)
-#define LCD_CUR_SH_RL		BIT(2)
-//---------------------------------------------------------------------------------------------------
-//Function Set Установка разрядности интерфейса (DL=0/1—4/8 бита) и
-//страницы знакогенератора P
-#define LCD_FUN_SET			(BIT(5) | BIT(3))
-#define LCD_FUN_SET_DL		BIT(4)
-#define LCD_FUN_SET_P		BIT(2)
-
-//Set CGRAM Address
-#define LCD_SET_CGRAM		BIT(6)
-
-
-//Set DDRAM Address
-#define LCD_SET_DDRAM 		BIT(7)
-//------------------------------------------------------------------------------
-static void LcdEnable(HD44780_I2C_Device *dev)
+static void HD44780_I2C_Test1(HD44780_I2C_Device *dev)
 {
-	printf("0x%.2x\n",dev->data);
-	HD44780_I2C_Write(dev);
-	HAL_Delay(1);
-	LCD_E_SET();
-	HAL_Delay(1);
-	HD44780_I2C_Write(dev);
-	HAL_Delay(1);
-	LCD_E_CLR();
-	HAL_Delay(1);
-	HD44780_I2C_Write(dev);
-}
-//------------------------------------------------------------------------------
-static void LcdSetData(HD44780_I2C_Device *dev,uint8_t data)
-{
-	//LcdSetDataOut();
-	LCD_RW_CLR();
+	HD44780_I2C_DisplayClear(dev);
 
-	//uint8_t highnib=data & 0xf0;
-	//uint8_t lownib=(data<<4)&0xf0;
+	static int i=0;
 
-	LCD_E_SET();
-	HD44780_I2C_Write(dev);
-	HAL_Delay(1);
+	HD44780_I2C_vsnprintf(dev,HD44780_DDRAM_Line0,"Time:%i",i);
+	HD44780_I2C_vsnprintf(dev,HD44780_DDRAM_Line1,"Time:%i",i+10058);
 
-	TBIT1(data,4)?LCD_DATA_4_SET():LCD_DATA_4_CLR();
-	TBIT1(data,5)?LCD_DATA_5_SET():LCD_DATA_5_CLR();
-	TBIT1(data,6)?LCD_DATA_6_SET():LCD_DATA_6_CLR();
-	TBIT1(data,7)?LCD_DATA_7_SET():LCD_DATA_7_CLR();
+	i++;
 
-	HD44780_I2C_Write(dev);
-	HAL_Delay(1);
-
-	LcdEnable(dev);
-	//_delay_us(4);
-	//LCD_E_CLR();
-	//_delay_us(4);
-	//LCD_E_SET();
-
-	LCD_E_SET();
-	HD44780_I2C_Write(dev);
-	HAL_Delay(1);
-
-	TBIT1(data,0)?LCD_DATA_4_SET():LCD_DATA_4_CLR();
-	TBIT1(data,1)?LCD_DATA_5_SET():LCD_DATA_5_CLR();
-	TBIT1(data,2)?LCD_DATA_6_SET():LCD_DATA_6_CLR();
-	TBIT1(data,3)?LCD_DATA_7_SET():LCD_DATA_7_CLR();
-
-	HD44780_I2C_Write(dev);
-	HAL_Delay(1);
-
-	LcdEnable(dev);
-	//_delay_us(4);
-	//LCD_E_CLR();
-	//_delay_us(4);*/
-
-	//dev->data
-
-}
-
-void LcdCommand(HD44780_I2C_Device *dev,uint8_t data)
-{
-	//LcdReady(dev);
-	//_delay_us(10);
-	LCD_A0_CLR();
-	HD44780_I2C_Write(dev);
-	LcdSetData(dev,data);
-	HAL_Delay(50);
-}
-//------------------------------------------------------------------------------
-static void hd_test_init(HD44780_I2C_Device *dev)
-{
-	dev->data = 0x00;
-
-	LCD_LED_SET();
-
-	LCD_E_CLR();
-	LCD_A0_CLR();
-	LCD_RW_CLR();
-
-	HD44780_I2C_Write(dev);
 	HAL_Delay(100);
-
-	LCD_DATA_4_SET();
-	LCD_DATA_5_SET();
-
-	HD44780_I2C_Write(dev);
-	HAL_Delay(1);
-
-	LcdEnable(dev);
-	HAL_Delay(50);
-
-	LcdEnable(dev);
-	HAL_Delay(50);
-
-	LcdEnable(dev);
-	HAL_Delay(1);
-
-	LCD_CLEAN_DATA();
-	LCD_DATA_5_SET();
-
-	HD44780_I2C_Write(dev);
-	HAL_Delay(1);
-
-	LcdEnable(dev);
-
-	//LcdEnable(dev);
-
-	HAL_Delay(150);
-
-	LcdCommand(dev,LCD_FUN_SET | LCD_FUN_SET_P);
-	LcdCommand(dev,LCD_DIS_CON | LCD_DIS_CON_D);
-	LcdCommand(dev,LCD_CLR_DIS);
-
-	LcdCommand(dev,LCD_SET_DDRAM | 0x00);
-	LcdCommand(dev,LCD_DIS_CON | LCD_DIS_CON_D | LCD_DIS_CON_B );
-
 }
 //------------------------------------------------------------------------------
 void HD44780_I2C_TestInit()
 {
 	HD44780_I2C_InitDev(&HD44780_I2C_Dev);
-
-	hd_test_init(&HD44780_I2C_Dev);
-
-
-	/*LcdSetDataOut();
-	LcdComPinInit();
-
-	LCD_E_CLR();
-	LCD_A0_CLR();
-	LCD_RW_CLR();
-
-	uint8_t s = 0;
-
-	LcdCleanDataPin();
-	SBIT(LCD_DATA_4_PORT,LCD_DATA_4_P);
-	SBIT(LCD_DATA_5_PORT,LCD_DATA_5_P);
-
-	while (s<3) {
-		LcdEnable();
-		_delay_ms(50);
-		s++;
-	}
-
-	LcdCleanDataPin();
-	SBIT(LCD_DATA_5_PORT,LCD_DATA_5_P);
-
-	LcdEnable();
-	LcdEnable();
-
-	for(s=0;s<10;s++)
-		LcdReady();
-
-	LcdCommand(LCD_FUN_SET | LCD_FUN_SET_P);
-	LcdCommand(LCD_DIS_CON | LCD_DIS_CON_D);
-	LcdCommand(LCD_CLR_DIS);*/
-
-
-
 }
 //------------------------------------------------------------------------------
 void HD44780_I2C_TestLed()
@@ -320,8 +317,6 @@ void HD44780_I2C_TestLed()
 //------------------------------------------------------------------------------
 void HD44780_I2C_TestLoop()
 {
-	//HD44780_I2C_TestLed();
-
-	//hd_test_init(&HD44780_I2C_Dev);
+	HD44780_I2C_Test1(&HD44780_I2C_Dev);
 }
 //------------------------------------------------------------------------------

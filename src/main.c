@@ -21,8 +21,6 @@
 #include "debug_print.h"
 #include "max2719.h"
 #include "buttom.h"
-//#include "i2c.h"
-//#include "PCF8574.h"
 #include "hd44780_i2c.h"
 //------------------------------------------------------------------------------
 void HAL_MspInit(void)
@@ -48,27 +46,22 @@ int main(void)
 	GPIO_Test_Init(TLED_PC13);
 	DEBUG_Init();
 
-	//MAX2719_TestInit();
-	//BUTTOM_TestInit();
-
-	//I2C_TestInit();
-
-	//PCF8574_TestInit();
-
+	MAX2719_TestInit();
+	BUTTOM_TestInit();
 	HD44780_I2C_TestInit();
 
 
 	while (1) {
-		//GPIO_Test_On(TLED_PC13);
+		GPIO_Test_Toggle(TLED_PC13);
 		//HAL_Delay(100);
 		//GPIO_Test_Off(TLED_PC13);
 		//HAL_Delay(100);
 		//fprintf(stderr,"Test\n");
 
-		//MAX2719_TestLoop();
-		//BUTTOM_TestLoop();
+		MAX2719_TestLoop();
+		BUTTOM_TestLoop();
 		//HAL_Delay(10);
-		//I2C_TestLoop();
+		///I2C_TestLoop();
 		//PCF8574_TestLoop();
 
 		HD44780_I2C_TestLoop();

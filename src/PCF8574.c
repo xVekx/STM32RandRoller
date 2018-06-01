@@ -86,4 +86,7 @@ void PCF8574_TestLoop()
 	printf("Ret:%i\n",ret);
 }
 //------------------------------------------------------------------------------
+#else
+void PCF8574_TestInit();
+void PCF8574_TestLoop();
 #endif

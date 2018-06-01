@@ -31,13 +31,9 @@ static void I2C_Clk(I2C_TypeDef *i2c,FunctionalState stat)
 #endif
 }
 //------------------------------------------------------------------------------
-void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
-{
-}
+void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c) { }
 //------------------------------------------------------------------------------
-void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
-{
-}
+void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c) { }
 //------------------------------------------------------------------------------
 void I2C_InitDev(I2C_Device *dev)
 {

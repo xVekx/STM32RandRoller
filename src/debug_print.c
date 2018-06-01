@@ -7,7 +7,7 @@
 #include "debug_print.h"
 #include "def.h"
 //------------------------------------------------------------------------------
-static const GPIO_InitDevTypeDef GPIO_DebugUartPinInit[] = {
+static const GPIO_Device GPIO_DebugUartPinInit[] = {
 	{
 		.gpio_inittypedef = {
 			.Mode		= GPIO_MODE_AF_PP,

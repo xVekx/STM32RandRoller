@@ -302,7 +302,7 @@ void UART_InitDev(UART_InitDevTypeDev *uart)
 	}
 }
 
-static const GPIO_InitDevTypeDef GPIO_Test[] = {
+static const GPIO_Device GPIO_Test[] = {
 	{
 		.gpio_inittypedef = {
 			.Mode		= GPIO_MODE_AF_PP,

@@ -1,62 +1,40 @@
 #include "spi.h"
 #include "def.h"
 //------------------------------------------------------------------------------
-void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
+#define SPI_CLK(_port,_port_sel,_stat_sel)									\
+					{if(_port == _port_sel)									\
+						if(_stat_sel) 										\
+						 __HAL_RCC_##_port##_CLK_ENABLE();					\
+						 else												\
+						 __HAL_RCC_##_port##_CLK_DISABLE();}
+
+//------------------------------------------------------------------------------
+static void SPI_Clk(SPI_TypeDef *spi,FunctionalState stat)
 {
-#if defined( SPI1 )
-	if( hspi->Instance == SPI1 ) {
-		__HAL_RCC_SPI1_CLK_ENABLE();
-	}
+#if defined(SPI1)
+	SPI_CLK(SPI1,spi,stat);
 #endif
 
-#if defined( SPI2 )
-	if( hspi->Instance == SPI2 ) {
-		__HAL_RCC_SPI2_CLK_ENABLE();
-	}
+#if defined(SPI2)
+	SPI_CLK(SPI2,spi,stat);
 #endif
 
-#if defined( SPI3 )
-	if( hspi->Instance == SPI3 ) {
-		__HAL_RCC_SPI3_CLK_ENABLE();
-	}
+#if defined(SPI3)
+	SPI_CLK(SPI3,spi,stat);
 #endif
 
-#if defined( SPI4 )
-	if( hspi->Instance == SPI4) {
-		__HAL_RCC_SPI4_CLK_ENABLE();
-	}
+#if defined(SPI4)
+	SPI_CLK(SPI4,spi,stat);
 #endif
 }
 //------------------------------------------------------------------------------
-void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
-{
-#if defined( SPI1 )
-	if( hspi->Instance == SPI1) {
-		__HAL_RCC_SPI1_CLK_DISABLE();
-	}
-#endif
-
-#if defined( SPI2 )
-	if(hspi->Instance == SPI2) {
-		__HAL_RCC_SPI2_CLK_DISABLE();
-	}
-#endif
-
-#if defined( SPI3 )
-	if(hspi->Instance==SPI3) {
-		__HAL_RCC_SPI3_CLK_DISABLE();
-	}
-#endif
-
-#if defined( SPI4 )
-	if(hspi->Instance==SPI4) {
-		__HAL_RCC_SPI4_CLK_DISABLE();
-	}
-#endif
-}
+void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi) { }
+//------------------------------------------------------------------------------
+void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi) { }
 //------------------------------------------------------------------------------
 void SPI_InitDev(SPI_Device *dev)
 {
+	SPI_Clk(dev->hspi.Instance,ENABLE);
 	GPIO_InitPin(dev->pins,dev->pins_size);
 	if (HAL_SPI_Init(&dev->hspi) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -65,11 +43,13 @@ void SPI_InitDev(SPI_Device *dev)
 //------------------------------------------------------------------------------
 void SPI_DeInit(SPI_Device *dev)
 {
+	SPI_Clk(dev->hspi.Instance,DISABLE);
 	if (HAL_SPI_DeInit(&dev->hspi) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 	GPIO_DeInitPin(dev->pins,dev->pins_size);
 }
+#if 0
 //------------------------------------------------------------------------------
 void SPI_TestInit()
 {
@@ -81,3 +61,4 @@ void SPI_TestLoop()
 
 }
 //------------------------------------------------------------------------------
+#endif

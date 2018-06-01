@@ -3,63 +3,14 @@
 #include "stdio.h"
 #include "string.h"
 //------------------------------------------------------------------------------
-#define MAX2719_NSS		0
-//------------------------------------------------------------------------------
-static const GPIO_InitDevTypeDef GPIO_SpiPinInit[] = {
-	{
-		.gpio_inittypedef = {
-			.Mode		=	GPIO_MODE_OUTPUT_OD,
-			.Speed		=	GPIO_SPEED_FREQ_HIGH,
-			.Pull		=	GPIO_NOPULL,
-			.Pin		=	GPIO_PIN_12,	//SPI2_NSS
-		},
-		.gpio_typedef	=	GPIOB,
-	},{
-		.gpio_inittypedef = {
-			.Mode		=	GPIO_MODE_AF_OD,
-			.Speed		=	GPIO_SPEED_FREQ_HIGH,
-			.Pull		=	GPIO_NOPULL,
-			.Pin		=	GPIO_PIN_13 |	//SPI2_SCK
-							GPIO_PIN_15,	//SPI2_MOSI
-		},
-		.gpio_typedef	=	GPIOB,
-	},{
-		.gpio_inittypedef = {
-			.Mode		=	GPIO_MODE_INPUT,
-			.Speed		=	GPIO_SPEED_FREQ_HIGH,
-			.Pull		=	GPIO_NOPULL,
-			.Pin		=	GPIO_PIN_14,	//SPI2_MISO
-		},
-		.gpio_typedef	=	GPIOB,
-	}
-};
-//------------------------------------------------------------------------------
-static MAX2719_DevDef	max2719 = {
-	.spi =  {
-		.hspi = {
-			.Instance = SPI2,
-			.Init = {
-				.Mode				= SPI_MODE_MASTER,
-				.Direction			= SPI_DIRECTION_2LINES,
-				.DataSize			= SPI_DATASIZE_16BIT,
-				.CLKPolarity		= SPI_POLARITY_LOW,
-				.CLKPhase			= SPI_PHASE_1EDGE,
-				.NSS				= SPI_NSS_SOFT,
-				.BaudRatePrescaler	= SPI_BAUDRATEPRESCALER_256,
-				.FirstBit			= SPI_FIRSTBIT_MSB,
-				.TIMode				= SPI_TIMODE_DISABLE,
-				.CRCCalculation		= SPI_CRCCALCULATION_DISABLE,
-				.CRCPolynomial		= 10,
-			}
-		},
-		.pins = GPIO_SpiPinInit,
-		.pins_size = ARRAY_SIZE(GPIO_SpiPinInit),
-	}
-};
-//------------------------------------------------------------------------------
 void MAX2719_InitDev(MAX2719_DevDef *dev)
 {
 	SPI_InitDev(&dev->spi);
+}
+//------------------------------------------------------------------------------
+void MAX2719_DeInitDev(MAX2719_DevDef *dev)
+{
+	SPI_DeInitDev(&dev->spi);
 }
 //------------------------------------------------------------------------------
 void MAX2719_Write(MAX2719_DevDef *dev,uint8_t addres,uint8_t command)
@@ -70,11 +21,13 @@ void MAX2719_Write(MAX2719_DevDef *dev,uint8_t addres,uint8_t command)
 	uint16_t pack = (addres << 8) | command;
 
 	SPI_HandleTypeDef *hspi = &dev->spi.hspi;
-	GPIO_InitDevTypeDef *gpio = dev->spi.pins;
+	GPIO_Device *gpio = dev->spi.pins;
 
-	GPIO_WritePin(gpio[MAX2719_NSS],GPIO_PIN_RESET);
+	uint8_t nss = dev->NSS;
+	GPIO_Device pin_nss = gpio[nss];
+	GPIO_WritePin(pin_nss,GPIO_PIN_RESET);
 	HAL_SPI_Transmit(hspi,&pack,1,0xFFF);
-	GPIO_WritePin(gpio[MAX2719_NSS],GPIO_PIN_SET);
+	GPIO_WritePin(pin_nss,GPIO_PIN_SET);
 }
 //------------------------------------------------------------------------------
 void MAX2719_CommNOOP(MAX2719_DevDef *dev)
@@ -153,6 +106,60 @@ void MAX2719_SetUint32(MAX2719_DevDef *dev,uint32_t i)
 	MAX2719_SymbolDigitConvert(fontbuff,buff,4);
 	MAX2719_SetSymbol(dev,fontbuff,dev->digitbegin,dev->digitend);
 }
+#if 1
+//------------------------------------------------------------------------------
+static const GPIO_Device GPIO_SpiPinInit[] = {
+	{
+		.gpio_inittypedef = {
+			.Mode		=	GPIO_MODE_OUTPUT_OD,
+			.Speed		=	GPIO_SPEED_FREQ_HIGH,
+			.Pull		=	GPIO_NOPULL,
+			.Pin		=	GPIO_PIN_12,	//SPI2_NSS
+		},
+		.gpio_typedef	=	GPIOB,
+	},{
+		.gpio_inittypedef = {
+			.Mode		=	GPIO_MODE_AF_OD,
+			.Speed		=	GPIO_SPEED_FREQ_HIGH,
+			.Pull		=	GPIO_NOPULL,
+			.Pin		=	GPIO_PIN_13 |	//SPI2_SCK
+							GPIO_PIN_15,	//SPI2_MOSI
+		},
+		.gpio_typedef	=	GPIOB,
+	},{
+		.gpio_inittypedef = {
+			.Mode		=	GPIO_MODE_INPUT,
+			.Speed		=	GPIO_SPEED_FREQ_HIGH,
+			.Pull		=	GPIO_NOPULL,
+			.Pin		=	GPIO_PIN_14,	//SPI2_MISO
+		},
+		.gpio_typedef	=	GPIOB,
+	}
+};
+//------------------------------------------------------------------------------
+static MAX2719_DevDef	max2719 = {
+	.spi =  {
+		.hspi = {
+			.Instance = SPI2,
+			.Init = {
+				.Mode				= SPI_MODE_MASTER,
+				.Direction			= SPI_DIRECTION_2LINES,
+				.DataSize			= SPI_DATASIZE_16BIT,
+				.CLKPolarity		= SPI_POLARITY_LOW,
+				.CLKPhase			= SPI_PHASE_1EDGE,
+				.NSS				= SPI_NSS_SOFT,
+				.BaudRatePrescaler	= SPI_BAUDRATEPRESCALER_256,
+				.FirstBit			= SPI_FIRSTBIT_MSB,
+				.TIMode				= SPI_TIMODE_DISABLE,
+				.CRCCalculation		= SPI_CRCCALCULATION_DISABLE,
+				.CRCPolynomial		= 10,
+			}
+		},
+		.pins = GPIO_SpiPinInit,
+		.pins_size = ARRAY_SIZE(GPIO_SpiPinInit),
+	},
+	.NSS = 0,
+};
 //------------------------------------------------------------------------------
 void MAX2719_Test1(MAX2719_DevDef *dev)
 {
@@ -191,3 +198,7 @@ void MAX2719_TestLoop()
 	HAL_Delay(10);
 }
 //------------------------------------------------------------------------------
+#else
+void MAX2719_TestInit();
+void MAX2719_TestLoop();
+#endif

@@ -94,14 +94,12 @@ typedef struct {
 	MAX2719_ScanLimit	scanlimit;
 	MAX2719_Addr		digitbegin;
 	MAX2719_Addr		digitend;
-//TODO добавить пин cs
-	//void (*init_command)(void);
+	uint8_t				NSS;
 } MAX2719_DevDef;
 //------------------------------------------------------------------------------
 void MAX2719_InitDev(MAX2719_DevDef *dev);
-
+void MAX2719_DeInitDev(MAX2719_DevDef *dev);
 void MAX2719_TestInit();
 void MAX2719_TestLoop();
-//void MAX2719_TestInit();
 //------------------------------------------------------------------------------
 #endif

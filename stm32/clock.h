@@ -16,7 +16,7 @@
 //------------------------------------------------------------------------------
 typedef struct
 {
-	RCC_ClkInitTypeDef clk;//RCC_OscInitTypeDef
+	RCC_ClkInitTypeDef clk;
 	RCC_OscInitTypeDef osc;
 	RCC_PeriphCLKInitTypeDef periphclk;
 } RCC_ClkTypeDef;

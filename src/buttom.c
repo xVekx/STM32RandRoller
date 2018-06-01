@@ -18,6 +18,12 @@ void BUTTOM_InitDev(BUTTOM_DevDef *dev)
 	dev->ready = 0;
 }
 //------------------------------------------------------------------------------
+void BUTTOM_DeInitDev(BUTTOM_DevDef *dev)
+{
+	free(dev->state);
+	GPIO_DeInitPin(dev->pins,dev->pins_size);
+}
+//------------------------------------------------------------------------------
 void BUTTOM_Scan(BUTTOM_DevDef *dev)
 {
 	uint8_t i;
@@ -43,13 +49,11 @@ void BUTTOM_Scan(BUTTOM_DevDef *dev)
 			if(	( dev->state[i].b.StateOld == KEY_UP ) &&
 				( dev->state[i].b.StateNew == KEY_DOWN ) ) {
 				dev->state[i].b.TrigUpToDown = 1;
-				//printf("TrigUpToDown buttom %d\n",i);
 				dev->ready = 1;
 			}
 			if(	( dev->state[i].b.StateOld == KEY_DOWN ) &&
 				( dev->state[i].b.StateNew == KEY_UP ) ) {
 				dev->state[i].b.TrigDownToUp = 1;
-				//printf("TrigDownToUp buttom %d\n",i);
 				dev->ready = 1;
 			}
 			dev->state[i].b.Count = 0;
@@ -70,9 +74,9 @@ void BUTTOM_Clean(BUTTOM_DevDef *dev)
 	}
 	dev->ready = 0;
 }
-////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
-static const GPIO_InitDevTypeDef GPIO_ButtomPinInit[] = {
+#if 1
+static const GPIO_Device GPIO_ButtomPinInit[] = {
 	{
 		.gpio_inittypedef = {
 			.Mode		=	GPIO_MODE_INPUT,
@@ -120,3 +124,7 @@ void BUTTOM_TestLoop()
 	}
 }
 //------------------------------------------------------------------------------
+#else
+void BUTTOM_TestInit(){}
+void BUTTOM_TestLoop(){}
+#endif

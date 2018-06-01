@@ -17,7 +17,7 @@ typedef union {
 //------------------------------------------------------------------------------
 typedef struct {
 	BUTTOM_State*			state;
-	GPIO_InitDevTypeDef*	pins;
+	GPIO_Device*	pins;
 	const uint8_t			pins_size;
 	uint8_t					ready;
 	uint8_t					count_ready;
@@ -29,6 +29,7 @@ typedef struct {
 #define GET_BUTTOM_SIZE(_dev)				( (_dev)->pins_size )
 //------------------------------------------------------------------------------
 void BUTTOM_InitDev(BUTTOM_DevDef *dev);
+void BUTTOM_DeInitDev(BUTTOM_DevDef *dev);
 void BUTTOM_TestInit();
 void BUTTOM_TestLoop();
 //------------------------------------------------------------------------------

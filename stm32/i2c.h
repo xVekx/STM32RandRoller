@@ -19,7 +19,7 @@
 //------------------------------------------------------------------------------
 typedef struct {
 	I2C_HandleTypeDef		hi2c;
-	GPIO_InitDevTypeDef*	pins;
+	GPIO_Device*			pins;
 	const int				pins_size;
 } I2C_Device;
 //------------------------------------------------------------------------------

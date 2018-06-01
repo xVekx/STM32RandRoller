@@ -34,14 +34,15 @@ typedef enum {
 typedef struct {
 	GPIO_InitTypeDef	gpio_inittypedef;
 	GPIO_TypeDef		*gpio_typedef;
-} GPIO_InitDevTypeDef;
+} GPIO_Device;
 //------------------------------------------------------------------------------
-void GPIO_InitPin(const GPIO_InitDevTypeDef *pins,int size);
-void GPIO_DeInitPin(const GPIO_InitDevTypeDef *pins,int size);
-void GPIO_WritePin(GPIO_InitDevTypeDef pin ,GPIO_PinState state);
-GPIO_PinState GPIO_ReadPin(GPIO_InitDevTypeDef pin);
+void GPIO_InitPin(const GPIO_Device *pins,int size);
+void GPIO_DeInitPin(const GPIO_Device *pins,int size);
+void GPIO_WritePin(GPIO_Device pin ,GPIO_PinState state);
+GPIO_PinState GPIO_ReadPin(GPIO_Device pin);
 void GPIO_Test_Init(Led_TypeDef Led);
 void GPIO_Test_On(Led_TypeDef Led);
 void GPIO_Test_Off(Led_TypeDef Led);
+void GPIO_Test_Toggle(Led_TypeDef Led);
 //------------------------------------------------------------------------------
 #endif
