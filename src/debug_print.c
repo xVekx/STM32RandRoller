@@ -57,8 +57,8 @@ int _write (int fd, char *ptr, int len)
 {
 	UNUSED(fd);
 	if(fd == STDERR_FILENO) {
-		HAL_UART_Transmit(	&UART_DebugInit.huart,
-							(uint8_t*)"[ERR]",5,0xFFFF);
+		/*HAL_UART_Transmit(	&UART_DebugInit.huart,
+							(uint8_t*)"[ERR]",5,0xFFFF);*/
 		for(int i=0;i<len;i++) {
 			HAL_UART_Transmit(	&UART_DebugInit.huart,
 								(uint8_t*)&ptr[i],1,0xFFFF);

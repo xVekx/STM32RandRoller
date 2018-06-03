@@ -187,7 +187,7 @@ int HD44780_I2C_vsnprintf(	HD44780_I2C_Device *dev,
 
 	for(int i=0;i<size;) {
 		int cc = CharUtf8ToUnc(&buff[i],&i);
-		printf("0x%.2x\n",cc);
+		//printf("0x%.2x\n",cc);
 		if((cc < 0) || (cc == '\0'))
 			break;
 		if(cc != '\n') {
@@ -236,6 +236,7 @@ void HD44780_I2C_DeInitDev(HD44780_I2C_Device *dev)
 	HD44780_I2C_DeInitDev(&dev->pcf8574);
 	printf("HD44780_I2C_DeInitDev OK\n");
 }
+#if 1
 //------------------------------------------------------------------------------
 static GPIO_Device GPIO_HD44780_I2C_PinInit[] = {
 	{
@@ -277,8 +278,6 @@ static HD44780_I2C_Device HD44780_I2C_Dev = {
 		.i2c_addr = 0x27,
 	}
 };
-
-
 //------------------------------------------------------------------------------
 static void HD44780_I2C_Test1(HD44780_I2C_Device *dev)
 {
@@ -307,12 +306,12 @@ void HD44780_I2C_TestLed()
 	HAL_Delay(1000);
 	HAL_StatusTypeDef ret;
 	ret = PCF8574_Write(&HD44780_I2C_Dev.pcf8574,data,1);
-	printf("Ret:%i\n",ret);
+	//printf("Ret:%i\n",ret);
 
 	data[0] = 0;
 	HAL_Delay(1000);
 	ret = PCF8574_Write(&HD44780_I2C_Dev.pcf8574,data,1);
-	printf("Ret:%i\n",ret);
+	//printf("Ret:%i\n",ret);
 }
 //------------------------------------------------------------------------------
 void HD44780_I2C_TestLoop()
@@ -320,3 +319,4 @@ void HD44780_I2C_TestLoop()
 	HD44780_I2C_Test1(&HD44780_I2C_Dev);
 }
 //------------------------------------------------------------------------------
+#endif

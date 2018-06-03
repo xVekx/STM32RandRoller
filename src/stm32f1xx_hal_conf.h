@@ -79,7 +79,7 @@
 /*#define HAL_SMARTCARD_MODULE_ENABLED   */
 #define HAL_SPI_MODULE_ENABLED
 /*#define HAL_SRAM_MODULE_ENABLED   */
-/*#define HAL_TIM_MODULE_ENABLED   */
+#define HAL_TIM_MODULE_ENABLED
 #define HAL_UART_MODULE_ENABLED
 /*#define HAL_USART_MODULE_ENABLED   */
 /*#define HAL_WWDG_MODULE_ENABLED   */
@@ -102,7 +102,7 @@
 #endif /* HSE_VALUE */
 
 #if !defined  (HSE_STARTUP_TIMEOUT)
-  #define HSE_STARTUP_TIMEOUT    ((uint32_t)100)   /*!< Time out for HSE start up, in ms */
+  #define HSE_STARTUP_TIMEOUT    ((uint32_t)1000)   /*!< Time out for HSE start up, in ms */
 #endif /* HSE_STARTUP_TIMEOUT */
 
 /**
@@ -117,11 +117,11 @@
 /**
   * @brief Internal Low Speed oscillator (LSI) value.
   */
-#if !defined  (LSI_VALUE) 
+#if !defined  (LSI_VALUE)
  #define LSI_VALUE               40000U    /*!< LSI Typical Value in Hz */
 #endif /* LSI_VALUE */                     /*!< Value of the Internal Low Speed oscillator in Hz
-                                                The real value may vary depending on the variations
-                                                in voltage and temperature. */
+												The real value may vary depending on the variations
+												in voltage and temperature. */
 
 /**
   * @brief External Low Speed oscillator (LSE) value.

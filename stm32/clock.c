@@ -5,15 +5,18 @@
 //------------------------------------------------------------------------------
 static  RCC_ClkTypeDef Clk_Config = {
 	.osc = {
-		.OscillatorType			=	RCC_OSCILLATORTYPE_LSI	|
+		.OscillatorType			=	RCC_OSCILLATORTYPE_LSE	|
+//									RCC_OSCILLATORTYPE_LSI	|
 									RCC_OSCILLATORTYPE_HSE,
 		.HSEState				=	RCC_HSE_ON,
+		.LSEState				=	RCC_LSE_ON,
+		//.LSIState				=	RCC_LSI_ON,
 		.HSEPredivValue			=	RCC_HSE_PREDIV_DIV1,
-		.HSIState				=	RCC_HSI_ON,
-		.LSIState				=	RCC_LSI_ON,
-		.PLL.PLLState			=	RCC_PLL_ON,
-		.PLL.PLLSource			=	RCC_PLLSOURCE_HSE,
-		.PLL.PLLMUL				=	RCC_PLL_MUL9,
+		.PLL = {
+			.PLLState			=	RCC_PLL_ON,
+			.PLLSource			=	RCC_PLLSOURCE_HSE,
+			.PLLMUL				=	RCC_PLL_MUL9,
+		}
 	},
 	.clk = {
 		.ClockType				=	RCC_CLOCKTYPE_HCLK	|	RCC_CLOCKTYPE_SYSCLK	|
@@ -25,7 +28,7 @@ static  RCC_ClkTypeDef Clk_Config = {
 	},
 	.periphclk = {
 		.PeriphClockSelection	=	RCC_PERIPHCLK_RTC	|	RCC_PERIPHCLK_USB,
-		.RTCClockSelection		=	RCC_RTCCLKSOURCE_LSI,
+		.RTCClockSelection		=	RCC_RTCCLKSOURCE_HSE_DIV128,
 		.UsbClockSelection		=	RCC_USBCLKSOURCE_PLL_DIV1_5,
 
 	},
@@ -35,20 +38,41 @@ void SystemClock_Config(void)
 {
 	//__HAL_RCC_AFIO_CLK_ENABLE();
 
+	__HAL_RCC_APB1_FORCE_RESET();
+	__HAL_RCC_APB1_RELEASE_RESET();
+
+	__HAL_RCC_APB2_FORCE_RESET();
+	__HAL_RCC_APB2_RELEASE_RESET();
+
+	//HAL_Delay(1000);
+
 	if (HAL_RCC_OscConfig(&Clk_Config.osc) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 
+	//HAL_Delay(1000);
 	if (HAL_RCC_ClockConfig(&Clk_Config.clk, FLASH_LATENCY_2) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 
+	//HAL_Delay(1000);
 	if (HAL_RCCEx_PeriphCLKConfig(&Clk_Config.periphclk) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 
+	//HAL_Delay(1000);
+
 	HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 	HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+
+	__HAL_RCC_APB1_FORCE_RESET();
+	__HAL_RCC_APB1_RELEASE_RESET();
+
+	__HAL_RCC_APB2_FORCE_RESET();
+	__HAL_RCC_APB2_RELEASE_RESET();
+
+	//__SYSCFG_CLK_ENABLE();
+
 
   //HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }

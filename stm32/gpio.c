@@ -98,8 +98,8 @@ static const GPIO_Device GPIO_LED_InitPins[] = {
 	{
 		.gpio_inittypedef = {
 			.Mode		= GPIO_MODE_OUTPUT_PP,
-			.Speed		= GPIO_SPEED_FREQ_MEDIUM,
-			.Pull		= GPIO_PULLUP,
+			.Speed		= GPIO_SPEED_FREQ_LOW,
+			.Pull		= GPIO_NOPULL,
 			.Pin		= GPIO_PIN_13,
 		},
 		.gpio_typedef	= GPIOC,

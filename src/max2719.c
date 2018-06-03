@@ -3,17 +3,17 @@
 #include "stdio.h"
 #include "string.h"
 //------------------------------------------------------------------------------
-void MAX2719_InitDev(MAX2719_DevDef *dev)
+void MAX2719_InitDev(MAX2719_DevDevice *dev)
 {
 	SPI_InitDev(&dev->spi);
 }
 //------------------------------------------------------------------------------
-void MAX2719_DeInitDev(MAX2719_DevDef *dev)
+void MAX2719_DeInitDev(MAX2719_DevDevice *dev)
 {
 	SPI_DeInitDev(&dev->spi);
 }
 //------------------------------------------------------------------------------
-void MAX2719_Write(MAX2719_DevDef *dev,uint8_t addres,uint8_t command)
+void MAX2719_Write(MAX2719_DevDevice *dev,uint8_t addres,uint8_t command)
 {
 	if(dev == NULL || dev->spi.pins == NULL)
 		return;
@@ -30,44 +30,44 @@ void MAX2719_Write(MAX2719_DevDef *dev,uint8_t addres,uint8_t command)
 	GPIO_WritePin(pin_nss,GPIO_PIN_SET);
 }
 //------------------------------------------------------------------------------
-void MAX2719_CommNOOP(MAX2719_DevDef *dev)
+void MAX2719_CommNOOP(MAX2719_DevDevice *dev)
 {
 	MAX2719_Write(dev,MAX2719_Addr_NOOP,MAX2719_Addr_NOOP);
 }
 //------------------------------------------------------------------------------
-void MAX2719_CommDecodeMode(MAX2719_DevDef *dev,MAX2719_DecodeMode dm)
+void MAX2719_CommDecodeMode(MAX2719_DevDevice *dev,MAX2719_DecodeMode dm)
 {
 	MAX2719_Write(dev,MAX2719_Addr_DecodeMode,dm);
 }
 //------------------------------------------------------------------------------
-void MAX2719_CommIntensity(MAX2719_DevDef *dev,MAX2719_Intensity i)
+void MAX2719_CommIntensity(MAX2719_DevDevice *dev,MAX2719_Intensity i)
 {
 	MAX2719_Write(dev,MAX2719_Addr_Intensity,i);
 }
 //------------------------------------------------------------------------------
-void MAX2719_CommScanLimit(MAX2719_DevDef *dev,MAX2719_ScanLimit sl)
+void MAX2719_CommScanLimit(MAX2719_DevDevice *dev,MAX2719_ScanLimit sl)
 {
 	MAX2719_Write(dev,MAX2719_Addr_ScanLimit,sl);
 }
 //------------------------------------------------------------------------------
-void MAX2719_CommShutdown(MAX2719_DevDef *dev,MAX2719_Shutdown sd)
+void MAX2719_CommShutdown(MAX2719_DevDevice *dev,MAX2719_Shutdown sd)
 {
 	MAX2719_Write(dev,MAX2719_Addr_Shutdown,sd);
 }
 //------------------------------------------------------------------------------
-void MAX2719_CommDisplayTest(MAX2719_DevDef *dev,MAX2719_DisplayTest dt)
+void MAX2719_CommDisplayTest(MAX2719_DevDevice *dev,MAX2719_DisplayTest dt)
 {
 	MAX2719_Write(dev,MAX2719_Addr_DisplayTest,dt);
 }
 //------------------------------------------------------------------------------
-void MAX2719_SetSymbolAll(MAX2719_DevDef *dev,uint8_t ch,MAX2719_Addr start,MAX2719_Addr begin)
+void MAX2719_SetSymbolAll(MAX2719_DevDevice *dev,uint8_t ch,MAX2719_Addr start,MAX2719_Addr begin)
 {
 	for(uint8_t i = start;i < begin + 1; i++) {
 		MAX2719_Write(dev,i,ch);
 	}
 }
 //------------------------------------------------------------------------------
-void MAX2719_SetSymbol(MAX2719_DevDef *dev,uint8_t *buff,MAX2719_Addr start,MAX2719_Addr begin)
+void MAX2719_SetSymbol(MAX2719_DevDevice *dev,uint8_t *buff,MAX2719_Addr start,MAX2719_Addr begin)
 {
 	for(uint8_t i = start,b = 0;i < begin + 1; i++,b++) {
 		MAX2719_Write(dev,(begin + 1) - i,buff[b]);
@@ -85,7 +85,7 @@ void MAX2719_SymbolDigitConvert(uint8_t *dest,uint8_t *src,int len)
 	}
 }
 //------------------------------------------------------------------------------
-void MAX2719_SetUint32(MAX2719_DevDef *dev,uint32_t i)
+void MAX2719_SetUint32(MAX2719_DevDevice *dev,uint32_t i)
 {
 	MAX2719_CommNOOP(dev);
 	MAX2719_CommDisplayTest(dev,MAX2719_DisplayTestOff);
@@ -137,7 +137,7 @@ static const GPIO_Device GPIO_SpiPinInit[] = {
 	}
 };
 //------------------------------------------------------------------------------
-static MAX2719_DevDef	max2719 = {
+static MAX2719_DevDevice	max2719 = {
 	.spi =  {
 		.hspi = {
 			.Instance = SPI2,
@@ -161,7 +161,7 @@ static MAX2719_DevDef	max2719 = {
 	.NSS = 0,
 };
 //------------------------------------------------------------------------------
-void MAX2719_Test1(MAX2719_DevDef *dev)
+void MAX2719_Test1(MAX2719_DevDevice *dev)
 {
 	MAX2719_CommNOOP(dev);
 	MAX2719_CommDisplayTest(dev,MAX2719_DisplayTestOff);

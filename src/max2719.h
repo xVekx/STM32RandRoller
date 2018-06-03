@@ -95,10 +95,10 @@ typedef struct {
 	MAX2719_Addr		digitbegin;
 	MAX2719_Addr		digitend;
 	uint8_t				NSS;
-} MAX2719_DevDef;
+} MAX2719_DevDevice;
 //------------------------------------------------------------------------------
-void MAX2719_InitDev(MAX2719_DevDef *dev);
-void MAX2719_DeInitDev(MAX2719_DevDef *dev);
+void MAX2719_InitDev(MAX2719_DevDevice *dev);
+void MAX2719_DeInitDev(MAX2719_DevDevice *dev);
 void MAX2719_TestInit();
 void MAX2719_TestLoop();
 //------------------------------------------------------------------------------

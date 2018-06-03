@@ -55,7 +55,9 @@ Product {
         ]
 
     //cpp.defines: [ "STM32F103xB","USE_HAL_DRIVER","BOARD_STM32F103C8T6","ARM_MATH_CM3"]
-    cpp.defines: [ "STM32F103xB","USE_HAL_DRIVER","BOARD_STM32F103C8T6",]
+//    cpp.defines: [ "STM32F103xB","USE_HAL_DRIVER","BOARD_STM32F103C8T6","LSE_VALUE=32768"]
+    cpp.defines: [ "STM32F103xB","USE_HAL_DRIVER","BOARD_STM32F103C8T6"]
+
 
     //cpp.cxxFlags: [ "-std=c++99" ]
     //cpp.cFlags: [ "-std=gnu99" ]
@@ -198,6 +200,12 @@ Product {
 
             path + "Inc/"+stm32fx+"_hal_usart.h",
             path + "Src/"+stm32fx+"_hal_usart.c",
+
+            path + "Inc/"+stm32fx+"_hal_dma.h",
+            path + "Src/"+stm32fx+"_hal_dma.c",
+            path + "Inc/"+stm32fx+"_hal_dma_ex.h",
+            //path + "Src/"+stm32fx+"_hal_dma_ex.c",
+
 
             path + "Inc/"+stm32fx+"_hal_pcd.h",
             path + "Src/"+stm32fx+"_hal_pcd.c",

@@ -6,7 +6,7 @@
 #define KEY_DOWN			0
 #define KEY_UP				1
 //------------------------------------------------------------------------------
-void BUTTOM_InitDev(BUTTOM_DevDef *dev)
+void BUTTOM_InitDev(BUTTOM_Device *dev)
 {
 	GPIO_InitPin(dev->pins,dev->pins_size);
 	dev->state = (BUTTOM_State*)malloc(sizeof(BUTTOM_State) * dev->pins_size);
@@ -18,13 +18,13 @@ void BUTTOM_InitDev(BUTTOM_DevDef *dev)
 	dev->ready = 0;
 }
 //------------------------------------------------------------------------------
-void BUTTOM_DeInitDev(BUTTOM_DevDef *dev)
+void BUTTOM_DeInitDev(BUTTOM_Device *dev)
 {
 	free(dev->state);
 	GPIO_DeInitPin(dev->pins,dev->pins_size);
 }
 //------------------------------------------------------------------------------
-void BUTTOM_Scan(BUTTOM_DevDef *dev)
+void BUTTOM_Scan(BUTTOM_Device *dev)
 {
 	uint8_t i;
 	for( i = 0;i<dev->pins_size;i++) {
@@ -62,7 +62,7 @@ void BUTTOM_Scan(BUTTOM_DevDef *dev)
 	}
 }
 //------------------------------------------------------------------------------
-void BUTTOM_Clean(BUTTOM_DevDef *dev)
+void BUTTOM_Clean(BUTTOM_Device *dev)
 {
 	for(uint8_t i=0; i<dev->pins_size; i++) {
 		if(dev->state[i].b.TrigDownToUp) {
@@ -96,7 +96,7 @@ static const GPIO_Device GPIO_ButtomPinInit[] = {
 	}
 };
 //------------------------------------------------------------------------------
-static BUTTOM_DevDef	buttom = {
+static BUTTOM_Device	buttom = {
 	.pins = GPIO_ButtomPinInit,
 	.pins_size = ARRAY_SIZE(GPIO_ButtomPinInit),
 	.count_ready = 20,
@@ -109,7 +109,7 @@ void BUTTOM_TestInit()
 //------------------------------------------------------------------------------
 void BUTTOM_TestLoop()
 {
-	BUTTOM_DevDef *dev = &buttom;
+	BUTTOM_Device *dev = &buttom;
 	BUTTOM_Scan(dev);
 	if(GET_BUTTOM_IS_TRIG(dev)) {
 		for(int i = 0; i < GET_BUTTOM_SIZE(dev); i++) {

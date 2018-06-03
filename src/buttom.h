@@ -21,15 +21,15 @@ typedef struct {
 	const uint8_t			pins_size;
 	uint8_t					ready;
 	uint8_t					count_ready;
-} BUTTOM_DevDef;
+} BUTTOM_Device;
 //------------------------------------------------------------------------------
 #define GET_BUTTOM_TRIG_UP_TO_DOWN(_dev,_i) ( (_dev)->state[(_i)].b.TrigUpToDown )
 #define GET_BUTTOM_TRIG_DOWN_TO_UP(_dev,_i) ( (_dev)->state[(_i)].b.TrigDownToUp )
 #define GET_BUTTOM_IS_TRIG(_dev)			( (_dev)->ready )
 #define GET_BUTTOM_SIZE(_dev)				( (_dev)->pins_size )
 //------------------------------------------------------------------------------
-void BUTTOM_InitDev(BUTTOM_DevDef *dev);
-void BUTTOM_DeInitDev(BUTTOM_DevDef *dev);
+void BUTTOM_InitDev(BUTTOM_Device *dev);
+void BUTTOM_DeInitDev(BUTTOM_Device *dev);
 void BUTTOM_TestInit();
 void BUTTOM_TestLoop();
 //------------------------------------------------------------------------------
