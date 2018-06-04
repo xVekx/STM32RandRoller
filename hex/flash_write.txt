@@ -1,0 +1,2 @@
+st-flash erase
+st-flash --format ihex write STM32RandRoller-0.0.1.hex
