@@ -63,8 +63,8 @@ void GPIO_InitPin(const GPIO_Device *pins, int size)
 {
 	if(!pins) return;
 	for(int i=0;i<size;i++) {
-		GPIO_TypeDef *gpio_port = pins[i].gpio_typedef;
-		GPIO_InitTypeDef gpio_pin = pins[i].gpio_inittypedef;
+		GPIO_TypeDef *gpio_port = pins[i].gpio_type;
+		GPIO_InitTypeDef gpio_pin = pins[i].gpio_init;
 		GPIO_Clk(gpio_port,ENABLE);
 		HAL_GPIO_Init(gpio_port,&gpio_pin);
 	}
@@ -73,36 +73,43 @@ void GPIO_InitPin(const GPIO_Device *pins, int size)
 void GPIO_DeInitPin(const GPIO_Device *pins, int size)
 {
 	for(int i=0;i<size;i++) {
-		HAL_GPIO_DeInit(pins[i].gpio_typedef,
-						pins[i].gpio_inittypedef.Pin);
-		GPIO_Clk(pins[i].gpio_typedef,DISABLE);
+		HAL_GPIO_DeInit(pins[i].gpio_type,
+						pins[i].gpio_init.Pin);
+		GPIO_Clk(pins[i].gpio_type,DISABLE);
 	}
 }
 //------------------------------------------------------------------------------
 void GPIO_WritePin(GPIO_Device pin , GPIO_PinState state)
 {
-	HAL_GPIO_WritePin(	pin.gpio_typedef,
-						(uint16_t)pin.gpio_inittypedef.Pin,
+	HAL_GPIO_WritePin(	pin.gpio_type,
+						(uint16_t)pin.gpio_init.Pin,
 						state);
+}
+//------------------------------------------------------------------------------
+void GPIO_TogglePin(GPIO_Device pin )
+{
+	HAL_GPIO_TogglePin(	pin.gpio_type,
+						(uint16_t)pin.gpio_init.Pin);
+
 }
 //------------------------------------------------------------------------------
 GPIO_PinState GPIO_ReadPin(GPIO_Device pin)
 {
-	return  HAL_GPIO_ReadPin(	pin.gpio_typedef,
-								(uint16_t)pin.gpio_inittypedef.Pin);
+	return  HAL_GPIO_ReadPin(	pin.gpio_type,
+								(uint16_t)pin.gpio_init.Pin);
 }
 //------------------------------------------------------------------------------
 #if defined ( BOARD_STM32F103C8T6 )
 //------------------------------------------------------------------------------
 static const GPIO_Device GPIO_LED_InitPins[] = {
 	{
-		.gpio_inittypedef = {
+		.gpio_init = {
 			.Mode		= GPIO_MODE_OUTPUT_PP,
 			.Speed		= GPIO_SPEED_FREQ_LOW,
 			.Pull		= GPIO_NOPULL,
 			.Pin		= GPIO_PIN_13,
 		},
-		.gpio_typedef	= GPIOC,
+		.gpio_type	= GPIOC,
 	}
 };
 //------------------------------------------------------------------------------
@@ -144,14 +151,14 @@ void GPIO_Test_Init(Led_TypeDef Led)
 		uint32_t size = ARRAY_SIZE(GPIO_LED_InitPins);
 		GPIO_InitPin(GPIO_LED_InitPins,(int)size);
 		for(uint32_t i = 0; i<size;i++) {
-				HAL_GPIO_WritePin(	GPIO_LED_InitPins[i].gpio_typedef,
-									(uint16_t)GPIO_LED_InitPins[i].gpio_inittypedef.Pin,
+				HAL_GPIO_WritePin(	GPIO_LED_InitPins[i].gpio_type,
+									(uint16_t)GPIO_LED_InitPins[i].gpio_init.Pin,
 									GPIO_PIN_RESET);
 		}
 	} else {
 		GPIO_InitPin(&GPIO_LED_InitPins[Led],1);
-		HAL_GPIO_WritePin(	GPIO_LED_InitPins[Led].gpio_typedef,
-							(uint16_t)GPIO_LED_InitPins[Led].gpio_inittypedef.Pin,
+		HAL_GPIO_WritePin(	GPIO_LED_InitPins[Led].gpio_type,
+							(uint16_t)GPIO_LED_InitPins[Led].gpio_init.Pin,
 							GPIO_PIN_RESET);
 	}
 }
@@ -160,13 +167,13 @@ void GPIO_Test_On(Led_TypeDef Led)
 {
 	if(Led == TALL) {
 		for(uint32_t i = 0; i< ARRAY_SIZE(GPIO_LED_InitPins);i++) {
-			HAL_GPIO_WritePin(	GPIO_LED_InitPins[i].gpio_typedef,
-								(uint16_t)GPIO_LED_InitPins[i].gpio_inittypedef.Pin,
+			HAL_GPIO_WritePin(	GPIO_LED_InitPins[i].gpio_type,
+								(uint16_t)GPIO_LED_InitPins[i].gpio_init.Pin,
 								GPIO_PIN_SET);
 		}
 	} else {
-		HAL_GPIO_WritePin(	GPIO_LED_InitPins[Led].gpio_typedef,
-							(uint16_t)GPIO_LED_InitPins[Led].gpio_inittypedef.Pin,
+		HAL_GPIO_WritePin(	GPIO_LED_InitPins[Led].gpio_type,
+							(uint16_t)GPIO_LED_InitPins[Led].gpio_init.Pin,
 							GPIO_PIN_SET);
 	}
 }
@@ -175,13 +182,13 @@ void GPIO_Test_Off(Led_TypeDef Led)
 {
 	if(Led == TALL) {
 		for(uint32_t i = 0; i< ARRAY_SIZE(GPIO_LED_InitPins);i++) {
-			HAL_GPIO_WritePin(	GPIO_LED_InitPins[i].gpio_typedef,
-								(uint16_t)GPIO_LED_InitPins[i].gpio_inittypedef.Pin,
+			HAL_GPIO_WritePin(	GPIO_LED_InitPins[i].gpio_type,
+								(uint16_t)GPIO_LED_InitPins[i].gpio_init.Pin,
 								GPIO_PIN_RESET);
 		}
 	} else {
-		HAL_GPIO_WritePin(	GPIO_LED_InitPins[Led].gpio_typedef,
-							(uint16_t)GPIO_LED_InitPins[Led].gpio_inittypedef.Pin,
+		HAL_GPIO_WritePin(	GPIO_LED_InitPins[Led].gpio_type,
+							(uint16_t)GPIO_LED_InitPins[Led].gpio_init.Pin,
 							GPIO_PIN_RESET);
 	}
 }
@@ -190,12 +197,12 @@ void GPIO_Test_Toggle(Led_TypeDef Led)
 {
 	if(Led == TALL) {
 		for(uint32_t i = 0; i< ARRAY_SIZE(GPIO_LED_InitPins);i++) {
-			HAL_GPIO_TogglePin(	GPIO_LED_InitPins[i].gpio_typedef,
-								(uint16_t)GPIO_LED_InitPins[i].gpio_inittypedef.Pin);
+			HAL_GPIO_TogglePin(	GPIO_LED_InitPins[i].gpio_type,
+								(uint16_t)GPIO_LED_InitPins[i].gpio_init.Pin);
 		}
 	} else {
-		HAL_GPIO_TogglePin(	GPIO_LED_InitPins[Led].gpio_typedef,
-							(uint16_t)GPIO_LED_InitPins[Led].gpio_inittypedef.Pin);
+		HAL_GPIO_TogglePin(	GPIO_LED_InitPins[Led].gpio_type,
+							(uint16_t)GPIO_LED_InitPins[Led].gpio_init.Pin);
 	}
 }
 //------------------------------------------------------------------------------

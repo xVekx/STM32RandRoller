@@ -19,8 +19,8 @@ typedef struct
 	RCC_ClkInitTypeDef clk;
 	RCC_OscInitTypeDef osc;
 	RCC_PeriphCLKInitTypeDef periphclk;
-} RCC_ClkTypeDef;
+} RCC_Device;
 //------------------------------------------------------------------------------
-void SystemClock_Config(void);
+void RCC_InitDev(RCC_Device *dev);
 //------------------------------------------------------------------------------
 #endif

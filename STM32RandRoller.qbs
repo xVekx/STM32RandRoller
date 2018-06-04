@@ -48,7 +48,7 @@ Product {
         "-Xlinker",
         "--gc-sections",
 //        "-specs=nosys.specs",
-        "-specs=nano.specs", //отключаем float
+        "-specs=nano.specs",
 //        "-specs=rdimon.specs",
 //"-u _printf_float ",
         "-g",

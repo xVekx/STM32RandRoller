@@ -75,24 +75,24 @@ void BUTTOM_Clean(BUTTOM_Device *dev)
 	dev->ready = 0;
 }
 //------------------------------------------------------------------------------
-#if 1
+#if 0
 static const GPIO_Device GPIO_ButtomPinInit[] = {
 	{
-		.gpio_inittypedef = {
+		.gpio_init = {
 			.Mode		=	GPIO_MODE_INPUT,
 			.Speed		=	GPIO_SPEED_FREQ_HIGH,
 			.Pull		=	GPIO_PULLDOWN,
 			.Pin		=	GPIO_PIN_9,
 		},
-		.gpio_typedef	=	GPIOB,
+		.gpio_type	=	GPIOB,
 	},{
-		.gpio_inittypedef = {
+		.gpio_init = {
 			.Mode		=	GPIO_MODE_INPUT,
 			.Speed		=	GPIO_SPEED_FREQ_HIGH,
 			.Pull		=	GPIO_PULLDOWN,
 			.Pin		=	GPIO_PIN_8,
 		},
-		.gpio_typedef	=	GPIOB,
+		.gpio_type	=	GPIOB,
 	}
 };
 //------------------------------------------------------------------------------
@@ -124,7 +124,4 @@ void BUTTOM_TestLoop()
 	}
 }
 //------------------------------------------------------------------------------
-#else
-void BUTTOM_TestInit(){}
-void BUTTOM_TestLoop(){}
 #endif

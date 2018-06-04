@@ -21,21 +21,11 @@ void HAL_RTCEx_RTCEventCallback(RTC_HandleTypeDef *hrtc)
 //------------------------------------------------------------------------------
 void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc)
 {
-	__HAL_RCC_BKP_CLK_ENABLE();
-	HAL_PWR_EnableBkUpAccess();
-	/* Enable BKP CLK enable for backup registers */
-	//
-	/* Peripheral clock enable */
-	__HAL_RCC_RTC_ENABLE();
 }
 //------------------------------------------------------------------------------
 void RTC_InitDev(RTC_Device *dev)
 {
-	//HAL_RTCEx_EnableBypassShadow(&dev->hrtc);
-	//__HAL_RCC_RTC_ENABLE();
-	RTC_DeInitDev(dev);
-
-	HAL_RTC_WaitForSynchro(&dev->hrtc);
+	__HAL_RCC_RTC_ENABLE();
 
 	if(HAL_RTC_Init(&dev->hrtc) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -68,9 +58,7 @@ void RTC_DeInitDev(RTC_Device *dev)
 //------------------------------------------------------------------------------
 void RTC_InitDevSecondIT(RTC_Device *dev)
 {
-	//RTC_InitDev(dev);
 	HAL_RTCEx_SetSecond_IT(&dev->hrtc);
-	// HAL_RTC_WaitForSynchro(&hrtc);
 	NVIC_EnableIRQ(RTC_IRQn);
 }
 //------------------------------------------------------------------------------
@@ -78,7 +66,6 @@ void RTC_DeInitDevSecondIT(RTC_Device *dev)
 {
 	NVIC_DisableIRQ(RTC_IRQn);
 	HAL_RTCEx_DeactivateSecond(&dev->hrtc);
-	//RTC_DeInitDev(dev);
 }
 //------------------------------------------------------------------------------
 void PrintfDataTime(RTC_HandleTypeDef *hrtc)
@@ -140,7 +127,7 @@ void RTC_Write(RTC_HandleTypeDef *hrtc,time_t t)
 	HAL_RTC_SetTime(&hrtc, &time, RTC_FORMAT_BIN);
 }
 
-#if 1
+#if 0
 
 #include "gpio.h"
 static volatile int zzzz = 0;
@@ -190,7 +177,6 @@ void RTC_TestLoop()
 			zzzz = 0;
 	}
 }
-
 //------------------------------------------------------------------------------
 #endif
 //------------------------------------------------------------------------------

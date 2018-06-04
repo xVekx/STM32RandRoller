@@ -20,7 +20,7 @@ HAL_StatusTypeDef PCF8574_Write(PCF8574_Device *dev, uint8_t *data,int size) {
 //------------------------------------------------------------------------------
 HAL_StatusTypeDef PCF8574_Read(PCF8574_Device *dev, uint8_t *data,int size) {
 	HAL_StatusTypeDef ret;
-	ret = I2C_Read(&dev->i2c,(dev->i2c_addr << 1) | BIT(0),data,size);
+	ret = I2C_Read(&dev->i2c,(dev->i2c_addr << 1) | ( 1u << 0 ),data,size);
 	return ret;
 }
 #if 0
@@ -86,7 +86,4 @@ void PCF8574_TestLoop()
 	printf("Ret:%i\n",ret);
 }
 //------------------------------------------------------------------------------
-#else
-void PCF8574_TestInit();
-void PCF8574_TestLoop();
 #endif

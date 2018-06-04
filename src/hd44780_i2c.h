@@ -126,7 +126,6 @@ int HD44780_I2C_vsnprintf(	HD44780_I2C_Device *dev,
 							HD44780_DDRAM addr,
 							const char *text,
 							...);
-
 //------------------------------------------------------------------------------
 void HD44780_I2C_TestInit();
 void HD44780_I2C_TestLoop();

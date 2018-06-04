@@ -25,7 +25,7 @@ typedef struct {
 //------------------------------------------------------------------------------
 #define GET_BUTTOM_TRIG_UP_TO_DOWN(_dev,_i) ( (_dev)->state[(_i)].b.TrigUpToDown )
 #define GET_BUTTOM_TRIG_DOWN_TO_UP(_dev,_i) ( (_dev)->state[(_i)].b.TrigDownToUp )
-#define GET_BUTTOM_IS_TRIG(_dev)			( (_dev)->ready )
+#define GET_BUTTOM_IS_READY(_dev)			( (_dev)->ready )
 #define GET_BUTTOM_SIZE(_dev)				( (_dev)->pins_size )
 //------------------------------------------------------------------------------
 void BUTTOM_InitDev(BUTTOM_Device *dev);

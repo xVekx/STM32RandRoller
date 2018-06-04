@@ -1,9 +1,8 @@
-#ifndef __DEV_H
-#define __DEV_H
+#ifndef __DEV_PRINT_H
+#define __DEV_PRINT_H
 //------------------------------------------------------------------------------
-#include "dev_conf.h"
+#include "uart.h"
 //------------------------------------------------------------------------------
-void DEVICE_Init(Struct_Device *dev);
-void DEVICE_Loop(Struct_Device *dev);
+void DEV_PRINT_SetPtrDebugUart(UART_Device	*dev);
 //------------------------------------------------------------------------------
 #endif

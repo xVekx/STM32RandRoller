@@ -2,44 +2,6 @@
 #include "spi.h"
 #include "def.h"
 //------------------------------------------------------------------------------
-static SPI_Device* spi_ptr[] = { NULL, NULL, NULL, NULL };
-//------------------------------------------------------------------------------
-#if defined(SPI1)
-void SPI1_IRQHandler()
-{
-	for(int i=0;i<ARRAY_SIZE(spi_ptr);i++) {
-		if(spi_ptr[i] && spi_ptr[i]->hspi.Instance == SPI1 ) {
-			HAL_SPI_IRQHandler(&spi_ptr[i]->hspi);
-		}
-	}
-}
-#endif
-//------------------------------------------------------------------------------
-#if defined(SPI2)
-void SPI2_IRQHandler()
-{
-	for(int i=0;i<ARRAY_SIZE(spi_ptr);i++) {
-		if(spi_ptr[i] && spi_ptr[i]->hspi.Instance == SPI2 ) {
-			HAL_SPI_IRQHandler(&spi_ptr[i]->hspi);
-		}
-	}
-}
-#endif
-//------------------------------------------------------------------------------
-#if defined(SPI3)
-void SPI3_IRQHandler()
-{
-
-}
-#endif
-//------------------------------------------------------------------------------
-#if defined(SPI4)
-void SPI4_IRQHandler()
-{
-
-}
-#endif
-//------------------------------------------------------------------------------
 #define SPI_CLK(_port,_port_sel,_stat_sel)									\
 					{if(_port == _port_sel)									\
 						if(_stat_sel) 										\
@@ -82,11 +44,11 @@ void SPI_InitDev(SPI_Device *dev)
 //------------------------------------------------------------------------------
 void SPI_DeInit(SPI_Device *dev)
 {
-	SPI_Clk(dev->hspi.Instance,DISABLE);
 	if (HAL_SPI_DeInit(&dev->hspi) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 	GPIO_DeInitPin(dev->pins,dev->pins_size);
+	SPI_Clk(dev->hspi.Instance,DISABLE);
 }
 #if 0
 //------------------------------------------------------------------------------

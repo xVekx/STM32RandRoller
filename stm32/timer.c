@@ -22,25 +22,6 @@ static TIM_Base_Device *tim4_ptr = NULL;
 #define TIM_SET_PTR(_dev,_dev_sel,_ptr,_set)								\
 					{if((_dev) == (_dev_sel)) _ptr = _set;}
 //------------------------------------------------------------------------------
-static void TIM_Clk(TIM_TypeDef *tim,FunctionalState stat)
-{
-#if defined(TIM1)
-	TIM_CLK(TIM1,tim,stat);
-#endif
-
-#if defined(TIM2)
-	TIM_CLK(TIM2,tim,stat);
-#endif
-
-#if defined(TIM3)
-	TIM_CLK(TIM3,tim,stat);
-#endif
-
-#if defined(TIM4)
-	TIM_CLK(TIM4,tim,stat);
-#endif
-}
-//------------------------------------------------------------------------------
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	//printf("%s - 1\n",__func__);
@@ -61,15 +42,28 @@ void TIM3_IRQHandler(void)
 	}
 }
 //------------------------------------------------------------------------------
-void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
+static void TIM_Clk(TIM_TypeDef *tim,FunctionalState stat)
 {
+#if defined(TIM1)
+	TIM_CLK(TIM1,tim,stat);
+#endif
 
+#if defined(TIM2)
+	TIM_CLK(TIM2,tim,stat);
+#endif
+
+#if defined(TIM3)
+	TIM_CLK(TIM3,tim,stat);
+#endif
+
+#if defined(TIM4)
+	TIM_CLK(TIM4,tim,stat);
+#endif
 }
 //------------------------------------------------------------------------------
-void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef *htim)
-{
-
-}
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) { }
+//------------------------------------------------------------------------------
+void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef *htim) { }
 //------------------------------------------------------------------------------
 void TIM_Base_InitDev(TIM_Base_Device *dev)
 {
@@ -141,7 +135,7 @@ void TIM_Base_Stop_IT(TIM_Base_Device *dev)
 	printf("%s\n",__func__);
 }
 //------------------------------------------------------------------------------
-#if 1
+#if 0
 
 #include "gpio.h"
 //------------------------------------------------------------------------------

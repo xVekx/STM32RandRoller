@@ -103,10 +103,10 @@ void MAX2719_SetUint32(MAX2719_DevDevice *dev,uint32_t i)
 
 	sprintf(buff,"%04i",i);
 
-	MAX2719_SymbolDigitConvert(fontbuff,buff,4);
+	MAX2719_SymbolDigitConvert(fontbuff,&buff[1],3);
 	MAX2719_SetSymbol(dev,fontbuff,dev->digitbegin,dev->digitend);
 }
-#if 1
+#if 0
 //------------------------------------------------------------------------------
 static const GPIO_Device GPIO_SpiPinInit[] = {
 	{

@@ -190,7 +190,7 @@ int HD44780_I2C_vsnprintf(	HD44780_I2C_Device *dev,
 		//printf("0x%.2x\n",cc);
 		if((cc < 0) || (cc == '\0'))
 			break;
-		if(cc != '\n') {
+		if(cc != '\n' && cc != '\r') {
 			HD44780_I2C_Data(dev,cc);
 		}
 	}
@@ -236,7 +236,7 @@ void HD44780_I2C_DeInitDev(HD44780_I2C_Device *dev)
 	HD44780_I2C_DeInitDev(&dev->pcf8574);
 	printf("HD44780_I2C_DeInitDev OK\n");
 }
-#if 1
+#if 0
 //------------------------------------------------------------------------------
 static GPIO_Device GPIO_HD44780_I2C_PinInit[] = {
 	{
