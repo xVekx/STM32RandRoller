@@ -21,14 +21,6 @@ static const GPIO_Device MAX2719_GPIO_Init[] = {
 							GPIO_PIN_15,	//SPI2_MOSI
 		},
 		.gpio_type	=	GPIOB,
-	},{
-		.gpio_init = {
-			.Mode		=	GPIO_MODE_INPUT,
-			.Speed		=	GPIO_SPEED_FREQ_HIGH,
-			.Pull		=	GPIO_NOPULL,
-			.Pin		=	GPIO_PIN_14,	//SPI2_MISO
-		},
-		.gpio_type	=	GPIOB,
 	}
 };
 //------------------------------------------------------------------------------
@@ -134,6 +126,7 @@ static HD44780_I2C_Device HD44780_I2C_Init = {
 //Обработчик прерывания с rtc
 static void rtc_event_callback(RTC_HandleTypeDef *hrtc)
 {
+	UNUSED(hrtc);
 	RandRollDevice.flag_update_1hz = 1;
 }
 //------------------------------------------------------------------------------
@@ -164,6 +157,8 @@ static RTC_Device RTC_Init = {
 //Обработчик прерывания с таймера 3
 static void tim3_period_elapsed_callback(TIM_HandleTypeDef *htim)
 {
+	UNUSED(htim);
+
 	RandRollDevice.flag_update_100hz = 1;
 
 	static int tim3_count_10_hz = 0;
@@ -273,13 +268,13 @@ static RandAlgNode RandAlgNode_Init[] = {
 		.rand_min	= 5,
 		.delta		= 95,
 	},{
-		.count		= 20,
+		.count		= 17,
 		.rand_min	= 7,
-		.delta		= 9,
+		.delta		= 30,
 	},{
 		.count		= 15,
-		.rand_min	= 5,
-		.delta		= 5,
+		.rand_min	= 4,
+		.delta		= 15,
 	},{
 		.count		= 7,
 		.rand_min	= 1,

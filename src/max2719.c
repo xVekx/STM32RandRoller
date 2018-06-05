@@ -13,7 +13,7 @@ void MAX2719_DeInitDev(MAX2719_DevDevice *dev)
 	SPI_DeInitDev(&dev->spi);
 }
 //------------------------------------------------------------------------------
-void MAX2719_Write(MAX2719_DevDevice *dev,uint8_t addres,uint8_t command)
+static void MAX2719_Write(MAX2719_DevDevice *dev,uint8_t addres,uint8_t command)
 {
 	if(dev == NULL || dev->spi.pins == NULL)
 		return;
@@ -21,12 +21,12 @@ void MAX2719_Write(MAX2719_DevDevice *dev,uint8_t addres,uint8_t command)
 	uint16_t pack = (addres << 8) | command;
 
 	SPI_HandleTypeDef *hspi = &dev->spi.hspi;
-	GPIO_Device *gpio = dev->spi.pins;
+	const GPIO_Device *gpio = dev->spi.pins;
 
 	uint8_t nss = dev->NSS;
 	GPIO_Device pin_nss = gpio[nss];
 	GPIO_WritePin(pin_nss,GPIO_PIN_RESET);
-	HAL_SPI_Transmit(hspi,&pack,1,0xFFF);
+	HAL_SPI_Transmit(hspi,(uint8_t*)&pack,1,0xFFF);
 	GPIO_WritePin(pin_nss,GPIO_PIN_SET);
 }
 //------------------------------------------------------------------------------
@@ -94,16 +94,16 @@ void MAX2719_SetUint32(MAX2719_DevDevice *dev,uint32_t i)
 	MAX2719_CommShutdown(dev,MAX2719_ShutdownOn);
 	MAX2719_CommScanLimit(dev,dev->scanlimit);
 
-	uint8_t buff[16];
+	char buff[16];
 	uint8_t fontbuff[16];
 	for(int i=0;i<16;i++) {
 		buff[i] = 0;
 		fontbuff[i] = MAX2719_FontCode_Blank;
 	}
 
-	sprintf(buff,"%04i",i);
+	sprintf(buff,"%04lu",(uint32_t)(i));
 
-	MAX2719_SymbolDigitConvert(fontbuff,&buff[1],3);
+	MAX2719_SymbolDigitConvert(fontbuff,(uint8_t*)&buff[1],3);
 	MAX2719_SetSymbol(dev,fontbuff,dev->digitbegin,dev->digitend);
 }
 #if 0

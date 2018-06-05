@@ -2,14 +2,16 @@
 #include "uart.h"
 #include "def.h"
 //------------------------------------------------------------------------------
-#define UART_CLK(_port,_port_sel,_stat_sel)									\
-					{if(_port == _port_sel)									\
-						if(_stat_sel) 										\
-						 __HAL_RCC_##_port##_CLK_ENABLE();					\
-						 else												\
-						 __HAL_RCC_##_port##_CLK_DISABLE();}
+extern void _Error_Handler(char *file, int line);
 //------------------------------------------------------------------------------
-static void UART_Clk(SPI_TypeDef *spi,FunctionalState stat)
+#define UART_CLK(_port,_port_sel,_stat_sel)									\
+					{if( (_port) == (_port_sel) ) {							\
+						if( _stat_sel ) { 									\
+							__HAL_RCC_##_port##_CLK_ENABLE();				\
+						} else	{											\
+							__HAL_RCC_##_port##_CLK_DISABLE();}}}
+//------------------------------------------------------------------------------
+static void UART_Clk(USART_TypeDef *spi,FunctionalState stat)
 {
 #if defined(USART1)
 	UART_CLK(USART1,spi,stat);
@@ -28,9 +30,15 @@ static void UART_Clk(SPI_TypeDef *spi,FunctionalState stat)
 #endif
 }
 //------------------------------------------------------------------------------
-void HAL_UART_MspInit(UART_HandleTypeDef* huart) { }
+void HAL_UART_MspInit(UART_HandleTypeDef* huart)
+{
+	UNUSED(huart);
+}
 //------------------------------------------------------------------------------
-void HAL_UART_MspDeInit(UART_HandleTypeDef* huart) { }
+void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
+{
+	UNUSED(huart);
+}
 //------------------------------------------------------------------------------
 void UART_InitDev(UART_Device *dev)
 {

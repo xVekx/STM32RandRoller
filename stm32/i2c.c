@@ -4,13 +4,13 @@
 extern void _Error_Handler(char *file, int line);
 //------------------------------------------------------------------------------
 #define I2C_CLK(_port,_port_sel,_stat_sel)									\
-					{if(_port == _port_sel)									\
+					{if(_port == _port_sel)	{								\
 						if(_stat_sel) {										\
 						 __HAL_RCC_##_port##_FORCE_RESET();					\
 						 __HAL_RCC_##_port##_RELEASE_RESET();				\
 						 __HAL_RCC_##_port##_CLK_ENABLE();}					\
 						 else												\
-						 __HAL_RCC_##_port##_CLK_DISABLE();}
+						 __HAL_RCC_##_port##_CLK_DISABLE();}}
 //------------------------------------------------------------------------------
 static void I2C_Clk(I2C_TypeDef *i2c,FunctionalState stat)
 {
@@ -31,9 +31,15 @@ static void I2C_Clk(I2C_TypeDef *i2c,FunctionalState stat)
 #endif
 }
 //------------------------------------------------------------------------------
-void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c) { }
+void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
+{
+	UNUSED(hi2c);
+}
 //------------------------------------------------------------------------------
-void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c) { }
+void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
+{
+	UNUSED(hi2c);
+}
 //------------------------------------------------------------------------------
 void I2C_InitDev(I2C_Device *dev)
 {
@@ -175,15 +181,5 @@ void I2C_TestLoop()
 	data[0] = 0x00;
 	ret = I2C_Write(&I2C_DevInit,dev_addr,data,1);
 	printf("Ret:%i\n",ret);
-}
-#else
-void I2C_TestInit()
-{
-
-}
-
-void I2C_TestLoop()
-{
-
 }
 #endif

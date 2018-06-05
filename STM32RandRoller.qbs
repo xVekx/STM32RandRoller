@@ -8,6 +8,8 @@ import "FileExtension.js" as FileExtension
 //openocd -f interface/stlink-v2.cfg -f target/stm32f1x.cfg
 //arm-none-eabi-objcopy -O ihex "${BuildArtifactFileBaseName}.elf" "${BuildArtifactFileBaseName}.hex
 //picocom -b 115200 /dev/ttyUSB0
+//arm-none-eabi-objdump -DS STM32RandRoller > r.txt
+
 
 Product {
     Depends { name : "cpp" }
@@ -17,8 +19,7 @@ Product {
     name: "STM32RandRoller"
 
     cpp.linkerScripts: [
-        "ldscripts/STM32F103C8Tx_FLASH.ld",
-        "ldscripts/LIBS.ld"
+        "ldscripts/STM32F103C8Tx_FLASH.ld"
     ]
 
     cpp.commonCompilerFlags: [
@@ -30,8 +31,7 @@ Product {
         "-ffunction-sections",
         "-fstrict-aliasing",
         "-fdata-sections",
-//        "-fno-builtin",
-//        "-fno-rtti"
+        "-fno-builtin",
         ]
 
     cpp.linkerFlags: [
@@ -43,33 +43,26 @@ Product {
         "-ffunction-sections",
         "-fstrict-aliasing",
         "-fdata-sections",
-//        "-fno-builtin",
-//        "-fno-rtti",
+        "-fno-builtin",
         "-Xlinker",
         "--gc-sections",
-//        "-specs=nosys.specs",
         "-specs=nano.specs",
-//        "-specs=rdimon.specs",
-//"-u _printf_float ",
+        //"-u _printf_float ",
         "-g",
         ]
 
-    //cpp.defines: [ "STM32F103xB","USE_HAL_DRIVER","BOARD_STM32F103C8T6","ARM_MATH_CM3"]
-//    cpp.defines: [ "STM32F103xB","USE_HAL_DRIVER","BOARD_STM32F103C8T6","LSE_VALUE=32768"]
     cpp.defines: [ "STM32F103xB","USE_HAL_DRIVER","BOARD_STM32F103C8T6"]
 
-
-    //cpp.cxxFlags: [ "-std=c++99" ]
-    //cpp.cFlags: [ "-std=gnu99" ]
-    cpp.cxxFlags: [ "-std=gnu++11" ]
-    cpp.cFlags: [ "-std=gnu11",]
+    cpp.cxxFlags: [ "-std=c++99" ]
+    cpp.cFlags: [ "-std=gnu99" ]
+    //cpp.cxxFlags: [ "-std=gnu++11" ]
+    //cpp.cFlags: [ "-std=gnu11",]
     cpp.optimization: "small"
-    cpp.warningLevel: "none"
+    cpp.warningLevel: "all"
 
     Group {
         files: [
-              "ldscripts/STM32F103C8Tx_FLASH.ld",
-              "ldscripts/LIBS.ld"
+              "ldscripts/STM32F103C8Tx_FLASH.ld"
         ]
         name: "ldscripts"
     }
@@ -154,11 +147,6 @@ Product {
             path + "Inc/Legacy/stm32_hal_legacy.h",
             path + "Inc/"+stm32fx+"_hal_def.h",
 
-//            path + "Inc/"+stm32fx+"_hal_adc.h",
-//            path + "Src/"+stm32fx+"_hal_adc.c",
-//            path + "Inc/"+stm32fx+"_hal_adc_ex.h",
-//            path + "Src/"+stm32fx+"_hal_adc_ex.c",
-
             path + "Inc/"+stm32fx+"_hal_rcc.h",
             path + "Inc/"+stm32fx+"_hal_rcc_ex.h",
             path + "Src/"+stm32fx+"_hal_rcc.c",
@@ -180,11 +168,6 @@ Product {
             path + "Inc/"+stm32fx+"_hal_pwr.h",
             path + "Src/"+stm32fx+"_hal_pwr.c",
 
-//            path + "Inc/"+stm32fx+"_hal_flash.h",
-//            path + "Src/"+stm32fx+"_hal_flash.c",
-//            path + "Inc/"+stm32fx+"_hal_flash_ex.h",
-//            path + "Src/"+stm32fx+"_hal_flash_ex.c",
-
             path + "Inc/"+stm32fx+"_hal_gpio.h",
             path + "Src/"+stm32fx+"_hal_gpio.c",
             path + "Inc/"+stm32fx+"_hal_gpio_ex.h",
@@ -205,7 +188,6 @@ Product {
             path + "Src/"+stm32fx+"_hal_dma.c",
             path + "Inc/"+stm32fx+"_hal_dma_ex.h",
             //path + "Src/"+stm32fx+"_hal_dma_ex.c",
-
 
             path + "Inc/"+stm32fx+"_hal_pcd.h",
             path + "Src/"+stm32fx+"_hal_pcd.c",

@@ -210,29 +210,15 @@ static int8_t CDC_DeInit_FS(void)
   */
 static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 {
-  /* USER CODE BEGIN 5 */
-  switch(cmd)
-  {
-    case CDC_SEND_ENCAPSULATED_COMMAND:
+	UNUSED(pbuf);
+	UNUSED(length);
 
-    break;
-
-    case CDC_GET_ENCAPSULATED_RESPONSE:
-
-    break;
-
-    case CDC_SET_COMM_FEATURE:
-
-    break;
-
-    case CDC_GET_COMM_FEATURE:
-
-    break;
-
-    case CDC_CLEAR_COMM_FEATURE:
-
-    break;
-
+	switch(cmd) {
+		case CDC_SEND_ENCAPSULATED_COMMAND: break;
+		case CDC_GET_ENCAPSULATED_RESPONSE: break;
+		case CDC_SET_COMM_FEATURE: break;
+		case CDC_GET_COMM_FEATURE: break;
+		case CDC_CLEAR_COMM_FEATURE: break;
   /*******************************************************************************/
   /* Line Coding Structure                                                       */
   /*-----------------------------------------------------------------------------*/
@@ -250,28 +236,15 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   /*                                        4 - Space                            */
   /* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */
   /*******************************************************************************/
-    case CDC_SET_LINE_CODING:
+		case CDC_SET_LINE_CODING: break;
+		case CDC_GET_LINE_CODING: break;
+		case CDC_SET_CONTROL_LINE_STATE: break;
+		case CDC_SEND_BREAK: break;
+		default: break;
+	}
 
-    break;
-
-    case CDC_GET_LINE_CODING:
-
-    break;
-
-    case CDC_SET_CONTROL_LINE_STATE:
-
-    break;
-
-    case CDC_SEND_BREAK:
-
-    break;
-
-  default:
-    break;
-  }
-
-  return (USBD_OK);
-  /* USER CODE END 5 */
+	return (USBD_OK);
+	/* USER CODE END 5 */
 }
 
 /**
@@ -290,11 +263,12 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   */
 static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
-  /* USER CODE BEGIN 6 */
-  USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
-  USBD_CDC_ReceivePacket(&hUsbDeviceFS);
-  return (USBD_OK);
-  /* USER CODE END 6 */
+	UNUSED(Len);
+	/* USER CODE BEGIN 6 */
+	USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
+	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+	return (USBD_OK);
+	/* USER CODE END 6 */
 }
 
 /**

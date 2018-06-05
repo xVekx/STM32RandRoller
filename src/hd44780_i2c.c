@@ -75,10 +75,13 @@ static int CharUtf8ToUnc(char *text,int *size)
 //------------------------------------------------------------------------------
 static void HD44780_I2C_Write(HD44780_I2C_Device *dev)
 {
-	HAL_StatusTypeDef ret;
-	ret = PCF8574_Write(&dev->pcf8574,&dev->data.data,1);
-	if(ret != HAL_OK) {
-		printf("HD44780_I2C_Write Ret:%i\n",ret);
+	if(!dev->error) {
+		HAL_StatusTypeDef ret;
+		ret = PCF8574_Write(&dev->pcf8574,&dev->data.data,1);
+		if(ret != HAL_OK) {
+			printf("HD44780_I2C_Write Ret:%i\n",ret);
+			dev->error = 1;
+		}
 	}
 }
 //------------------------------------------------------------------------------
@@ -174,7 +177,7 @@ int HD44780_I2C_vsnprintf(	HD44780_I2C_Device *dev,
 {
 	HD44780_I2C_SetDDRAM(dev,addr);
 
-	const buff_size = 16;
+	const int buff_size = 16;
 	char buff[buff_size + 2];
 	memset(buff,0,buff_size + 2);
 
@@ -200,6 +203,7 @@ int HD44780_I2C_vsnprintf(	HD44780_I2C_Device *dev,
 void HD44780_I2C_InitDev(HD44780_I2C_Device *dev)
 {
 	PCF8574_InitDev(&dev->pcf8574);
+	dev->error = 0;
 	printf("HD44780_I2C_InitDev OK\n");
 
 	HAL_Delay(40);
@@ -233,7 +237,7 @@ void HD44780_I2C_InitDev(HD44780_I2C_Device *dev)
 //------------------------------------------------------------------------------
 void HD44780_I2C_DeInitDev(HD44780_I2C_Device *dev)
 {
-	HD44780_I2C_DeInitDev(&dev->pcf8574);
+	PCF8574_DeInitDev(&dev->pcf8574);
 	printf("HD44780_I2C_DeInitDev OK\n");
 }
 #if 0

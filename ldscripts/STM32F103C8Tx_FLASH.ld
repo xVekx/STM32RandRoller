@@ -35,8 +35,8 @@ ENTRY(Reset_Handler)
 /* Highest address of the user mode stack */
 _estack = 0x20005000;    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size = 0x0500;      /* required amount of heap  */
-_Min_Stack_Size = 0x1000; /* required amount of stack */
+_Min_Heap_Size = 0x0200;      /* required amount of heap  */
+_Min_Stack_Size = 0x0400; /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
@@ -159,11 +159,20 @@ SECTIONS
   /DISCARD/ :
   {
     libc.a ( * )
-    libm.a ( * )
-    libgcc.a ( * )
+	libm.a ( * )
+	libgcc.a ( * )
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
+
 }
 
-
+GROUP(
+	/*libgcc.a*/
+	/*libg.a*/
+	/*libc.a*/
+	/* libm.a */
+	/* libstdc++.a */
+	libnosys.a
+	/*libnano.a*/
+)

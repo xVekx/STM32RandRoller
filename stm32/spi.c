@@ -2,12 +2,14 @@
 #include "spi.h"
 #include "def.h"
 //------------------------------------------------------------------------------
+extern void _Error_Handler(char *file, int line);
+//------------------------------------------------------------------------------
 #define SPI_CLK(_port,_port_sel,_stat_sel)									\
-					{if(_port == _port_sel)									\
+					{if(_port == _port_sel) {									\
 						if(_stat_sel) 										\
 						 __HAL_RCC_##_port##_CLK_ENABLE();					\
 						 else												\
-						 __HAL_RCC_##_port##_CLK_DISABLE();}
+						 __HAL_RCC_##_port##_CLK_DISABLE();}}
 
 //------------------------------------------------------------------------------
 static void SPI_Clk(SPI_TypeDef *spi,FunctionalState stat)
@@ -29,9 +31,15 @@ static void SPI_Clk(SPI_TypeDef *spi,FunctionalState stat)
 #endif
 }
 //------------------------------------------------------------------------------
-void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi) { }
+void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
+{
+	UNUSED(hspi);
+}
 //------------------------------------------------------------------------------
-void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi) { }
+void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
+{
+	UNUSED(hspi);
+}
 //------------------------------------------------------------------------------
 void SPI_InitDev(SPI_Device *dev)
 {
@@ -42,7 +50,7 @@ void SPI_InitDev(SPI_Device *dev)
 	}
 }
 //------------------------------------------------------------------------------
-void SPI_DeInit(SPI_Device *dev)
+void SPI_DeInitDev(SPI_Device *dev)
 {
 	if (HAL_SPI_DeInit(&dev->hspi) != HAL_OK) {
 		_Error_Handler(__FILE__, __LINE__);
@@ -50,16 +58,4 @@ void SPI_DeInit(SPI_Device *dev)
 	GPIO_DeInitPin(dev->pins,dev->pins_size);
 	SPI_Clk(dev->hspi.Instance,DISABLE);
 }
-#if 0
 //------------------------------------------------------------------------------
-void SPI_TestInit()
-{
-
-}
-//------------------------------------------------------------------------------
-void SPI_TestLoop()
-{
-
-}
-//------------------------------------------------------------------------------
-#endif

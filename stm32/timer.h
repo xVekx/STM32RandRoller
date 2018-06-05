@@ -22,6 +22,9 @@ typedef struct {
 void TIM_Base_InitDev(TIM_Base_Device *dev);
 void TIM_Base_DeInitDev(TIM_Base_Device *dev);
 //------------------------------------------------------------------------------
+void TIM_Base_Start_IT(TIM_Base_Device *dev);
+void TIM_Base_Stop_IT(TIM_Base_Device *dev);
+//------------------------------------------------------------------------------
 void TIM_TestInit();
 //------------------------------------------------------------------------------
 #endif

@@ -99,6 +99,17 @@ typedef struct {
 //------------------------------------------------------------------------------
 void MAX2719_InitDev(MAX2719_DevDevice *dev);
 void MAX2719_DeInitDev(MAX2719_DevDevice *dev);
+//------------------------------------------------------------------------------
+void MAX2719_CommNOOP(MAX2719_DevDevice *dev);
+void MAX2719_CommDecodeMode(MAX2719_DevDevice *dev,MAX2719_DecodeMode dm);
+void MAX2719_CommIntensity(MAX2719_DevDevice *dev,MAX2719_Intensity i);
+void MAX2719_CommScanLimit(MAX2719_DevDevice *dev,MAX2719_ScanLimit sl);
+void MAX2719_CommShutdown(MAX2719_DevDevice *dev,MAX2719_Shutdown sd);
+void MAX2719_CommDisplayTest(MAX2719_DevDevice *dev,MAX2719_DisplayTest dt);
+void MAX2719_SetSymbolAll(MAX2719_DevDevice *dev,uint8_t ch,MAX2719_Addr start,MAX2719_Addr begin);
+void MAX2719_SetSymbol(MAX2719_DevDevice *dev,uint8_t *buff,MAX2719_Addr start,MAX2719_Addr begin);
+void MAX2719_SetUint32(MAX2719_DevDevice *dev,uint32_t i);
+//------------------------------------------------------------------------------
 void MAX2719_TestInit();
 void MAX2719_TestLoop();
 //------------------------------------------------------------------------------

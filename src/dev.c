@@ -1,5 +1,8 @@
 #include "dev.h"
 #include "usb_device.h"
+
+#include <stdio.h>
+#include <time.h>
 //------------------------------------------------------------------------------
 extern uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
 //------------------------------------------------------------------------------
@@ -60,6 +63,7 @@ void DEVICE_Loop(Struct_Device *dev)
 		char buff[64];
 		memset(buff,0x00,sizeof(char)*64);
 		time_t RTC_Time = RTC_Read(&dev->rtc->hrtc);
+
 		struct tm * stm = localtime( &RTC_Time );
 		strftime(buff,64,"Time:%X\n",stm);
 
@@ -82,7 +86,11 @@ void DEVICE_Loop(Struct_Device *dev)
 		buff[len-1] = '\r';
 
 		//Выводим строку по usb
-		CDC_Transmit_FS(buff,len);
+		CDC_Transmit_FS((uint8_t*)buff,len);
+
+		//Установим семя рандома по времени rtc
+		time_t Time = RTC_Read(&dev->rtc->hrtc);
+		srand(Time);
 
 		//Обнуляем флаг 1гц
 		dev->flag_update_1hz = 0;
@@ -159,12 +167,10 @@ void DEVICE_Loop(Struct_Device *dev)
 						//Проверяем состояние
 						if(!flag_rand_start && !flag_rand_clean) {
 
-							//Установим семя рандома по времени rtc
-							time_t Time = RTC_Read(&dev->rtc->hrtc);
-							srand(Time);
-
 							//Проинициализируем структуру алгоритма обработки рандома
 							RandAlg_InitDev(dev->ra);
+
+							RandAlg_SetMinMax(dev->ra,5,100);
 
 							//Установим флаг генерации и вывода на LED дисплей числа
 							flag_rand_start = 1;

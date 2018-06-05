@@ -235,8 +235,9 @@ __ALIGN_BEGIN uint8_t USBD_StrDesc[USBD_MAX_STR_DESC_SIZ] __ALIGN_END;
   */
 uint8_t * USBD_FS_DeviceDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
 {
-  *length = sizeof(USBD_FS_DeviceDesc);
-  return USBD_FS_DeviceDesc;
+	UNUSED(speed);
+	*length = sizeof(USBD_FS_DeviceDesc);
+	return USBD_FS_DeviceDesc;
 }
 
 /**
@@ -247,8 +248,9 @@ uint8_t * USBD_FS_DeviceDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
   */
 uint8_t * USBD_FS_LangIDStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
 {
-  *length = sizeof(USBD_LangIDDesc);
-  return USBD_LangIDDesc;
+	UNUSED(speed);
+	*length = sizeof(USBD_LangIDDesc);
+	return USBD_LangIDDesc;
 }
 
 /**
@@ -278,8 +280,9 @@ uint8_t * USBD_FS_ProductStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length
   */
 uint8_t * USBD_FS_ManufacturerStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
 {
-  USBD_GetString((uint8_t *)USBD_MANUFACTURER_STRING, USBD_StrDesc, length);
-  return USBD_StrDesc;
+	UNUSED(speed);
+	USBD_GetString((uint8_t *)USBD_MANUFACTURER_STRING, USBD_StrDesc, length);
+	return USBD_StrDesc;
 }
 
 /**

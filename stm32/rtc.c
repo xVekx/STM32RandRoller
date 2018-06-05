@@ -1,7 +1,9 @@
+#include <time.h>
+//------------------------------------------------------------------------------
 #include "rtc.h"
 #include "def.h"
-
-#include <time.h>
+//------------------------------------------------------------------------------
+extern void _Error_Handler(char *file, int line);
 //------------------------------------------------------------------------------
 RTC_Device *rtc_ptr = NULL;
 //------------------------------------------------------------------------------
@@ -21,6 +23,12 @@ void HAL_RTCEx_RTCEventCallback(RTC_HandleTypeDef *hrtc)
 //------------------------------------------------------------------------------
 void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc)
 {
+	UNUSED(hrtc);
+}
+//------------------------------------------------------------------------------
+void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc)
+{
+	UNUSED(hrtc);
 }
 //------------------------------------------------------------------------------
 void RTC_InitDev(RTC_Device *dev)
@@ -123,8 +131,8 @@ void RTC_Write(RTC_HandleTypeDef *hrtc,time_t t)
 	//timeStruct.StoreOperation	= RTC_STOREOPERATION_RESET;
 
 	// Change the RTC current date/time
-	HAL_RTC_SetDate(&hrtc, &data, RTC_FORMAT_BIN);
-	HAL_RTC_SetTime(&hrtc, &time, RTC_FORMAT_BIN);
+	HAL_RTC_SetDate(hrtc, &data, RTC_FORMAT_BIN);
+	HAL_RTC_SetTime(hrtc, &time, RTC_FORMAT_BIN);
 }
 
 #if 0
@@ -134,10 +142,8 @@ static volatile int zzzz = 0;
 //------------------------------------------------------------------------------
 static void rtc_event_callback_test(RTC_HandleTypeDef *hrtc)
 {
-
 	zzzz = 1;
 	PrintfDataTime(hrtc);
-
 }
 //------------------------------------------------------------------------------
 RTC_Device rtc_init = {

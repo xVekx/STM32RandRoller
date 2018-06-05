@@ -9,6 +9,7 @@
 #include "uart.h"
 #include "clock.h"
 #include "rand_alg.h"
+#include "dev_print.h"
 //------------------------------------------------------------------------------
 typedef struct {
 
@@ -20,8 +21,7 @@ typedef struct {
 	UART_Device				*uart_debug;
 	RCC_Device				*rcc;
 	RandAlg					*ra;
-	GPIO_Device				*led;
-
+	const GPIO_Device		*led;
 
 	uint8_t					flag_update_1hz;
 	uint8_t					flag_update_2hz;

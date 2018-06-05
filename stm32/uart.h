@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------
 typedef struct {
 	UART_HandleTypeDef		huart;
-	GPIO_Device*			pins;
+	const GPIO_Device*		pins;
 	const int				pins_size;
 } UART_Device;
 //------------------------------------------------------------------------------

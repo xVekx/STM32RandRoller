@@ -724,8 +724,9 @@ void USBD_LL_Delay(uint32_t Delay)
   */
 void *USBD_static_malloc(uint32_t size)
 {
-  static uint32_t mem[(sizeof(USBD_CDC_HandleTypeDef)/4)+1];/* On 32-bit boundary */
-  return mem;
+	UNUSED(size);
+	static uint32_t mem[(sizeof(USBD_CDC_HandleTypeDef)/4)+1];/* On 32-bit boundary */
+	return mem;
 }
 
 /**
@@ -735,7 +736,7 @@ void *USBD_static_malloc(uint32_t size)
   */
 void USBD_static_free(void *p)
 {
-
+	UNUSED(p);
 }
 
 /**
@@ -746,18 +747,8 @@ void USBD_static_free(void *p)
   */
 void HAL_PCDEx_SetConnectionState(PCD_HandleTypeDef *hpcd, uint8_t state)
 {
-  /* USER CODE BEGIN 6 */
-  if (state == 1)
-  {
-    /* Configure Low connection state. */
-
-  }
-  else
-  {
-    /* Configure High connection state. */
-
-  }
-  /* USER CODE END 6 */
+	UNUSED(hpcd);
+	if (state == 1) {
+	} else {
+	}
 }
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

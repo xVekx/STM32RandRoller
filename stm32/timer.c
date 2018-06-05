@@ -1,5 +1,7 @@
 #include "timer.h"
 //------------------------------------------------------------------------------
+extern void _Error_Handler(char *file, int line);
+//------------------------------------------------------------------------------
 #if defined(TIM2)
 static TIM_Base_Device *tim2_ptr = NULL;
 #endif
@@ -13,31 +15,27 @@ static TIM_Base_Device *tim4_ptr = NULL;
 #endif
 //------------------------------------------------------------------------------
 #define TIM_CLK(_dev,_dev_sel,_stat_sel)									\
-					{if(_dev == _dev_sel)									\
-						if(_stat_sel) 										\
+					{if(_dev == _dev_sel) {									\
+						if(_stat_sel) {										\
 							__HAL_RCC_##_dev##_CLK_ENABLE();				\
-						else												\
-							__HAL_RCC_##_dev##_CLK_DISABLE();}
+						} else {											\
+							__HAL_RCC_##_dev##_CLK_DISABLE();}}}
 //------------------------------------------------------------------------------
 #define TIM_SET_PTR(_dev,_dev_sel,_ptr,_set)								\
 					{if((_dev) == (_dev_sel)) _ptr = _set;}
 //------------------------------------------------------------------------------
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	//printf("%s - 1\n",__func__);
 	if(	tim3_ptr &&
 		htim->Instance == tim3_ptr->htim.Instance &&
 		tim3_ptr->period_elapsed_callback ) {
 		tim3_ptr->period_elapsed_callback(htim);
-		//printf("%s - 1\n",__func__);
 	}
 }
 //------------------------------------------------------------------------------
 void TIM3_IRQHandler(void)
 {
-	//printf("%s\n",__func__);
 	if(tim3_ptr) {
-		//printf("%s\n",__func__);
 		HAL_TIM_IRQHandler(&tim3_ptr->htim);
 	}
 }
@@ -61,9 +59,15 @@ static void TIM_Clk(TIM_TypeDef *tim,FunctionalState stat)
 #endif
 }
 //------------------------------------------------------------------------------
-void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) { }
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
+{
+	UNUSED(htim);
+}
 //------------------------------------------------------------------------------
-void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef *htim) { }
+void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef *htim)
+{
+	UNUSED(htim);
+}
 //------------------------------------------------------------------------------
 void TIM_Base_InitDev(TIM_Base_Device *dev)
 {

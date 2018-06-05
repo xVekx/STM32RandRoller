@@ -73,6 +73,6 @@ void _Error_Handler(char *file, int line)
 #ifdef  USE_FULL_ASSERT
 void assert_failed(uint8_t* file, uint32_t line)
 { 
-	fprintf(stderr,"Wrong parameters value: file %s on line %d\n", file, line);
+	fprintf(stderr,"Wrong parameters value: file %s on line %ld\n", (char*)file, (uint32_t)line);
 }
 #endif /* USE_FULL_ASSERT */

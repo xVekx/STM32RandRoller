@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------
 typedef struct {
 	SPI_HandleTypeDef		hspi;
-	GPIO_Device*			pins;
+	const GPIO_Device*			pins;
 	const int				pins_size;
 } SPI_Device;
 //------------------------------------------------------------------------------

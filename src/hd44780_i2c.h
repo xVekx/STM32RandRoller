@@ -102,6 +102,7 @@ typedef union {
 typedef struct {
 	PCF8574_Device	pcf8574;
 	HD44780_I2C_StrData	data;
+	int error;
 
 } HD44780_I2C_Device;
 //------------------------------------------------------------------------------
@@ -114,7 +115,7 @@ void HD44780_I2C_LedOff(HD44780_I2C_Device *dev);
 void HD44780_I2C_Command(HD44780_I2C_Device *dev,uint8_t data);
 void HD44780_I2C_Data(HD44780_I2C_Device *dev,uint8_t data);
 
-void HD44780_I2C_ClearDisplay(HD44780_I2C_Device *dev);
+void HD44780_I2C_DisplayClear(HD44780_I2C_Device *dev);
 void HD44780_I2C_ReturnHome(HD44780_I2C_Device *dev);
 void HD44780_I2C_EntryModeSet(HD44780_I2C_Device *dev,HD44780_EntryModeSet ems);
 void HD44780_I2C_DisplayControl(HD44780_I2C_Device *dev,HD44780_DisplayControl dc);

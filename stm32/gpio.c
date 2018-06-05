@@ -5,11 +5,11 @@
 #endif
 //------------------------------------------------------------------------------
 #define GPIO_CLK(_port,_port_sel,_stat_sel)									\
-					{if(_port == _port_sel)									\
-						if(_stat_sel) 										\
+					{if(_port == _port_sel) {								\
+						if(_stat_sel) {										\
 						 __HAL_RCC_##_port##_CLK_ENABLE();					\
-						 else												\
-						 __HAL_RCC_##_port##_CLK_DISABLE();}
+						 } else {											\
+						 __HAL_RCC_##_port##_CLK_DISABLE();}}}
 //------------------------------------------------------------------------------
 static void GPIO_Clk(GPIO_TypeDef *gpio_port,FunctionalState stat)
 {
