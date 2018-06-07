@@ -58,6 +58,8 @@ Product {
     //cpp.cxxFlags: [ "-std=gnu++11" ]
     //cpp.cFlags: [ "-std=gnu11",]
     cpp.optimization: "small"
+    // cpp.optimization: "fast"
+    //cpp.optimization: "none"
     cpp.warningLevel: "all"
 
     Group {
